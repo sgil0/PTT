@@ -1,8 +1,8 @@
 <?php
 
-include_once "libs/maLibUtils.php";
-include_once "libs/maLibBootstrap.php";
-include_once "libs/modele.php";
+include_once (__DIR__ . '/../libs/maLibUtils.php');
+include_once (__DIR__ . '/../libs/maLibBootstrap.php');
+include_once (__DIR__ . '/../libs/modele.php');
 
 // Si la page est appelée directement par son adresse, on redirige en passant pas la page index
 if (basename($_SERVER["PHP_SELF"]) != "index.php")
@@ -14,12 +14,12 @@ if (basename($_SERVER["PHP_SELF"]) != "index.php")
 // Pose qq soucis avec certains serveurs...
 echo "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
 
-$view = valider("view"); 
+// $view = valider("view"); 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-<!-- **** H E A D **** -->
+<!--  H E A D  -->
 <head>	
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>Pinf</title>
@@ -38,21 +38,18 @@ $view = valider("view");
 	
 
 </head>
-<!--  F I N  H E A D ** -->
+<!--  F I N  H E A D  -->
 
-<div id="maPage" style="margin-bottom:1000px;">
 
 <?php
 
-if (valider("connecte","SESSION") && $view!="partie")
+if (valider("connecte","SESSION"))
 		{
-			echo '
-			<nav class="navbar navbar-expand-lg bg-light">
-			<div class="container-fluid">
-			<a class="navbar-brand" href="index.php?view=accueil">Carz</a>
-			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      		<div class="navbar-nav">';
+			include "navBar.php";
+			
 		} 
-		?>
-    
-         	<!-- <li class="active"><a href="index.php?view=accueil">Accueil</a></li> -->
+?>
+
+
+
+<div id="maPage" style="margin-bottom:1000px;">
