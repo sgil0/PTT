@@ -4,7 +4,11 @@ include_once (__DIR__ . '/../libs/maLibUtils.php');
 include_once (__DIR__ . '/../libs/maLibBootstrap.php');
 include_once (__DIR__ . '/../libs/modele.php');
 
-include "navBar.php";
+
+if ($view != "login" && $view != "register"){
+	include "navBar.php";
+}
+
 
 // Si la page est appelée directement par son adresse, on redirige en passant pas la page index
 if (basename($_SERVER["PHP_SELF"]) != "index.php")

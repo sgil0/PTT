@@ -41,10 +41,12 @@
     ';
   } else {
     echo '
+    </div> </div>
+    <div class="d-flex align-items-center">
     <form class="container-fluid ">
-    <a href="#" class="btn btn-primary disabled" tabindex="-1" role="button" aria-disabled="true">Primary link</a>
+    <a href="?view=login" class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true" style="margin-top:15px;">Se connecter</a>
     </form>
-
+    </div>
 
     ';
   }
