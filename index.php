@@ -32,11 +32,11 @@ Les formulaires de toutes les vues générées enverront leurs données vers la 
 
 	include("templates/header.php");
 
-	if (!valider("connecte","SESSION"))
-	{
+	// if (!valider("connecte","SESSION"))
+	// {
 		
-		($view=="register") ? $view="register" : $view="login";
-	}
+	// 	($view=="register") ? $view="register" : $view="login";
+	// }
 	// En fonction de la vue à afficher, on appelle tel ou tel template
 	switch($view)
 	{		
@@ -61,5 +61,5 @@ Les formulaires de toutes les vues générées enverront leurs données vers la 
 
 	// Dans tous les cas, on affiche le pied de page
 	// Qui contient les coordonnées de la personne si elle est connectée
-	// include("templates/footer.php");
+	include("templates/footer.php");
 ?>

@@ -39,6 +39,14 @@
     </div>
 
     ';
+  } else {
+    echo '
+    <form class="container-fluid ">
+    <a href="#" class="btn btn-primary disabled" tabindex="-1" role="button" aria-disabled="true">Primary link</a>
+    </form>
+
+
+    ';
   }
 
 
