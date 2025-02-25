@@ -19,7 +19,15 @@ if (basename($_SERVER["PHP_SELF"]) != "index.php")
 		// Si l'utilisateur est connecte, on affiche un lien de deconnexion 
 		if (valider("connecte","SESSION"))
 		{
-			echo "<a href=\"controleur.php?action=Logout\">Se Déconnecter</a>";
+			echo '
+			</div>
+			<div class="d-flex align-items-center">
+			<form class="container-fluid ">
+			<a href=\'controleur.php?action=Logout\' class="btn btn-secondary" tabindex="-1" role="button" aria-disabled="true" style="margin-top:15px;">Se deconnecter</a>
+			</form>
+			</div>
+
+			';
 		}
 		?>
 	</p>
