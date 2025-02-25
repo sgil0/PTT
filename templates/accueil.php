@@ -1,4 +1,4 @@
 <html>
-    <h1>Accueil samuel sac a merde</h1>
+    <h1>Accueil</h1>
 </html>
 
