@@ -22,11 +22,11 @@ if (basename($_SERVER["PHP_SELF"]) != "index.php")
           <a href="controleur.php?action=Logout" class="btn btn-secondary">
             Se déconnecter
           </a>
+		  <span class="ms-3">|‎ ‎ ‎ </span>
         ';
       }
       ?>
       <!-- Éléments communs affichés dans tous les cas -->
-      <span class="ms-3">|‎ ‎ ‎ </span>
 	  <span  style="font-weight:bold;">Nous contacter :‎ ‎ </span>
 	  <div class="d-flex flex-column ms-4"> 
 		  <span>Particulier :</span>
