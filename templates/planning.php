@@ -1,122 +1,181 @@
+<?php
+// ----------------------
+// 1) PARAMÈTRES DE BASE
+// ----------------------
+
+// Récupération des paramètres GET pour la navigation
+$startDate = isset($_GET['start']) ? $_GET['start'] : date('Y-m-d');
+$selectedDate = isset($_GET['day']) ? $_GET['day'] : $startDate;
+
+// Génération d'un tableau de 7 jours à partir de $startDate
+$days = [];
+for ($i = 0; $i < 7; $i++) {
+    $days[] = date('Y-m-d', strtotime("$startDate + $i days"));
+}
+
+// Calcul des dates de la semaine précédente / suivante
+$prevStart = date('Y-m-d', strtotime("$startDate - 7 days"));
+$nextStart = date('Y-m-d', strtotime("$startDate + 7 days"));
+
+// -------------------------
+// 2) CRÉNEAUX HORAIRES
+// -------------------------
+// On génère toutes les 15 minutes entre 08:00 et 19:00
+// puis on répartit dans 3 groupes : Matin, Après-midi, Soir.
+$timeSlots = [
+    'Matin'       => [],
+    'Après-midi'  => [],
+    'Soir'        => []
+];
+
+$startTime = new DateTime('09:00');
+$endTime   = new DateTime('19:00');
+$interval  = new DateInterval('PT15M');  // incrément de 15 minutes
+$period    = new DatePeriod($startTime, $interval, $endTime);
+
+foreach ($period as $time) {
+    $hour = (int)$time->format('H');
+    $formatted = $time->format('H:i');
+    if ($hour < 12) {
+        $timeSlots['Matin'][] = $formatted;
+    } elseif ($hour < 16) {
+        $timeSlots['Après-midi'][] = $formatted;
+    } else {
+        $timeSlots['Soir'][] = $formatted;
+    }
+}
+
+// -------------------------
+// 3) GESTION DE LA SÉLECTION
+// -------------------------
+$selectedTime = isset($_POST['selectedTime']) ? $_POST['selectedTime'] : null;
+
+// -------------------------
+// 4) FORMATAGE DES DATES (Intl)
+// -------------------------
+$formatterDays = new IntlDateFormatter(
+    'fr_FR',
+    IntlDateFormatter::FULL,
+    IntlDateFormatter::NONE,
+    'Europe/Paris',
+    IntlDateFormatter::GREGORIAN,
+    'EEE d MMM' // ex. "lun. 10 mars"
+);
+
+$formatterSelected = new IntlDateFormatter(
+    'fr_FR',
+    IntlDateFormatter::FULL,
+    IntlDateFormatter::NONE,
+    'Europe/Paris',
+    IntlDateFormatter::GREGORIAN,
+    'EEEE d MMMM yyyy' // ex. "lundi 10 mars 2025"
+);
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elpis - Prise de Rendez-vous</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: white;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #f57c00;
-        }
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: black;
-        }
-        .active {
-            font-weight: bold;
-            border-bottom: 2px solid #f57c00;
-        }
-        .login-btn {
-            background-color: #f57c00;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .appointment-container {
-            max-width: 600px;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .calendar, .user-details {
-            margin-top: 20px;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            margin-top: 15px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <title>Planification d'appel</title>
+    <!-- Import TailwindCSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    
-    <main>
-        <h1 style="text-align: center;">Prenez rendez-vous</h1>
-        <section class="appointment-container">
-            <div class="appointment-details">
-                <h2>Appel de consultation</h2>
-                <p>Planifiez un appel personnalisé avec notre équipe d'experts pour discuter de vos besoins.</p>
-                <p>Gratuit • 15 minutes</p>
+<body class="bg-gray-50">
+<div class="container mx-auto p-6 bg-white shadow-md mt-6 rounded">
+
+    <!-- Titre et description -->
+    <h1 class="text-2xl font-bold mb-2">Prenez rendez-vous</h1>
+    <p class="mb-4 text-gray-700">
+        Planifiez un appel personnalisé avec notre équipe d'experts pour discuter de vos besoins 
+        et obtenir des conseils sur mesure. Gratuit • 15 minutes
+    </p>
+
+    <!-- Navigation semaine précédente / suivante -->
+    <div class="flex justify-between items-center mb-4">
+        <!-- Lien pour la semaine précédente -->
+        <a href="?view=planning&start=<?= $prevStart ?>"
+           class="px-4 py-2 bg-gray-200 rounded-md shadow-md hover:bg-gray-300">
+           &lt;
+        </a>
+
+        <!-- Liste des 7 jours (horizontal) -->
+        <div class="flex space-x-2">
+            <?php foreach ($days as $day): ?>
+                <?php
+                    $isSelected = ($day === $selectedDate);
+                    // Exemple : "lun. 10 mars"
+                    $label = $formatterDays->format(new DateTime($day));
+                ?>
+                <a href="?view=planning&start=<?= $startDate ?>&day=<?= $day ?>"
+                   class="px-4 py-2 rounded-md shadow-md 
+                   <?= $isSelected ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200' ?>">
+                    <?= ucfirst($label) ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Lien pour la semaine suivante -->
+        <a href="?view=planning&start=<?= $nextStart ?>"
+           class="px-4 py-2 bg-gray-200 rounded-md shadow-md hover:bg-gray-300">
+           &gt;
+        </a>
+    </div>
+
+    <!-- Titre du jour sélectionné (ex: "lundi 10 mars 2025") -->
+    <h2 class="text-xl font-semibold mb-4">
+        <?= ucfirst($formatterSelected->format(new DateTime($selectedDate))) ?>
+    </h2>
+
+    <!-- Formulaire pour sélectionner un créneau horaire -->
+    <form method="post" action="?view=planning&start=<?= $startDate ?>&day=<?= $selectedDate ?>">
+        
+        <!-- Parcours de chaque groupe (Matin, Après-midi, Soir) -->
+        <?php foreach ($timeSlots as $periodLabel => $slots): ?>
+            <div class="mb-6">
+                <h4 class="text-lg font-semibold mb-2"><?= $periodLabel ?></h4>
+                <div class="grid grid-cols-4 md:grid-cols-6 gap-2">
+                    <?php foreach ($slots as $time): ?>
+                        <button type="submit"
+                                name="selectedTime"
+                                value="<?= $time ?>"
+                                class="px-4 py-2 rounded shadow
+                                <?= ($selectedTime === $time)
+                                     ? 'bg-blue-500 text-white'
+                                     : 'bg-gray-100 hover:bg-gray-200'
+                                ?>">
+                            <?= $time ?>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
             </div>
-            <div class="calendar">
-                <label for="date">Choisissez un jour :</label>
-                <input type="date" id="date" name="date">
-                <label for="time">Choisissez une heure :</label>
-                <select id="time" name="time">
-                    <option value="09:00">09:00</option>
-                    <option value="09:15">09:15</option>
-                    <option value="09:30">09:30</option>
-                    <option value="09:45">09:45</option>
-                    <option value="10:00">10:00</option>
-                    <option value="10:15">10:15</option>
-                    <option value="10:30">10:30</option>
-                    <option value="10:45">10:45</option>
-                    <option value="11:00">11:00</option>
-                </select>
-            </div>
-            <div class="user-details">
-                <h3>Entrer les détails</h3>
-                <label for="name">Nom :</label>
-                <input type="text" id="name" name="name" placeholder="Votre nom">
-                <label for="phone">Numéro de téléphone :</label>
-                <input type="tel" id="phone" name="phone" placeholder="Votre téléphone">
-                <label for="email">E-mail :</label>
-                <input type="email" id="email" name="email" placeholder="Votre email">
-                <button type="submit">Confirmer le rendez-vous</button>
-            </div>
-        </section>
-    </main>
-    <script>
-        document.getElementById('date').addEventListener('change', function() {
-            console.log('Date sélectionnée :', this.value);
-        });
-        document.getElementById('time').addEventListener('change', function() {
-            console.log('Heure sélectionnée :', this.value);
-        });
-    </script>
+        <?php endforeach; ?>
+    </form>
+
+    <!-- Affichage du créneau sélectionné et bouton de confirmation -->
+    <?php if ($selectedTime): ?>
+    <!-- Formulaire de confirmation du rendez-vous -->
+    <form method="post" action="?view=planning&action=confirmer_rdv&start=<?= $startDate ?>&day=<?= $selectedDate ?>">
+        <div class="mt-6 p-4 bg-gray-100 rounded shadow-md">
+            <?php 
+                // Format d'affichage "dd/mm/yyyy" pour la date
+                $selectedDateFormatted = date('d/m/Y', strtotime($selectedDate));
+            ?>
+            <p class="mb-2">
+                Créneau sélectionné : 
+                <strong><?= $selectedDateFormatted ?></strong> 
+                à <strong><?= $selectedTime ?></strong>
+            </p>
+            <!-- Transmet le créneau et la date en POST -->
+            <input type="hidden" name="selectedTime" value="<?= $selectedTime ?>">
+            <input type="hidden" name="day" value="<?= $selectedDate ?>">
+            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600">
+                Confirmer le rendez-vous
+            </button>
+        </div>
+    </form>
+<?php endif; ?>
+
+
+</div>
 </body>
 </html>

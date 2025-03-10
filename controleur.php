@@ -80,6 +80,32 @@ session_start();
 					}
 					
 				}
+				
+				case 'confirmer_rdv':
+					// Récupère l'identifiant de l'utilisateur depuis la session
+					$id_utilisateur = valider("idUser", "SESSION");
+					// Récupère la date et l'heure sélectionnées envoyées en POST
+					$selectedDate = valider("day");
+					$selectedTime = valider("selectedTime");
+				
+					if ($id_utilisateur && $selectedDate && $selectedTime) {
+						 // Combine la date et l'heure pour créer un datetime au format SQL
+						 $date_heure = date("Y-m-d H:i:s", strtotime($selectedDate . " " . $selectedTime));
+						 
+						 // Appel à une fonction modèle pour insérer le rendez-vous dans la BDD
+						 if (ajouterRendezVous($id_utilisateur, $date_heure, "")) {
+							  // Si insertion réussie, redirige vers une vue de confirmation (à adapter)
+							  $addArgs = "?view=confirmation_rdv";
+						 } else {
+							  // En cas d'erreur d'insertion
+							  $addArgs = "?view=planning&error=insert";
+						 }
+					} else {
+						 // Si des données sont manquantes
+						 $addArgs = "?view=planning&error=missing_data";
+					}
+				break;
+				
 
 		}
 
