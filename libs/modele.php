@@ -126,4 +126,16 @@ function getPrenom($idUser){
 	return SQLGetChamp($SQL);	
 }
 
+function ajouterRendezVous($id_utilisateur, $date_heure, $description = "") {
+    // Préparez la requête SQL pour insérer un nouveau rendez-vous.
+    $sql = "INSERT INTO rendez_vous (id_utilisateur, date_heure, description) VALUES (:id_utilisateur, :date_heure, :description)";
+    // SQLInsert() est une fonction de votre librairie maLibSQL.pdo.php qui exécute la requête préparée.
+    return SQLInsert($sql, [
+         "id_utilisateur" => $id_utilisateur,
+         "date_heure" => $date_heure,
+         "description" => $description
+    ]);
+}
+
+
 ?>
