@@ -31,13 +31,8 @@
     }
 
     echo '</div> </div>
-      <div class="d-flex align-items-center">
         <div class="d-flex flex-column align-items-center">
-        <img src="./ressources/profil.png" alt="Profil" class="profile-img" style="width:35px; height:35px;">
-        <span class="profile-text mt-1"><strong>' . $nomUser . ' ' . $prenomUser . '</strong></span>
-        </div>
-    </div>
-
+        <div><a href="?view=userSettings" class="link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover"><strong>' . $nomUser . ' ' . $prenomUser . '</strong></a></div>
     ';
   } else {
     echo '
@@ -50,11 +45,7 @@
 
     ';
   }
-
-
-?>
-      
-    
+?>  
   </div>
 </nav>
 
