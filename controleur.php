@@ -71,7 +71,7 @@ session_start();
 				if ($nom = valider("nom"))
 				if ($prenom = valider("prenom"))
 				if ($type = valider("type"))
-				{
+				{	
 					if (!(verifUserBdd($email,$passe))){
 						mkUser($email,$passe,$nom,$prenom,$type);
 						$addArgs="?view=login";

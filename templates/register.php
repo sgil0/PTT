@@ -20,11 +20,11 @@
               </div>
 
               <div data-mdb-input-init class="form-outline form-white mb-4">
-                <input type="text" id="typeEmailX" class="form-control form-control-lg" name="nom" placeholder="Nom"/>
+                <input type="text" id="typeNom" class="form-control form-control-lg" name="nom" placeholder="Nom"/>
               </div>
 
               <div data-mdb-input-init class="form-outline form-white mb-4">
-                <input type="text" id="typeEmailX" class="form-control form-control-lg" name="prenom" placeholder="Prénom"/>
+                <input type="text" id="typePrenom" class="form-control form-control-lg" name="prenom" placeholder="Prénom"/>
               </div>
 
             <select class="form-select" aria-label="Default select example" name="type">
