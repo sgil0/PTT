@@ -11,6 +11,7 @@ $idUser=valider('idUser','SESSION');
 // var_dump($idUser);
 $user = getUtilisateur($idUser); // Ex : ['nom' => 'Dupont', 'prenom' => 'Jean', 'email' => 'jean.dupont@example.com']
 // var_dump($user);
+  
 ?>
 
 <body>
@@ -40,7 +41,7 @@ $user = getUtilisateur($idUser); // Ex : ['nom' => 'Dupont', 'prenom' => 'Jean',
                         <label for="new_email" class="form-label">Nouvel Email :</label>
                         <input type="email" class="form-control" id="new_email" name="new_email" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"  value="maj_email">Mettre à jour l'Email</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="maj_email">Mettre à jour l'Email</button>
                 </form>
             </div>
         </div>
@@ -64,10 +65,25 @@ $user = getUtilisateur($idUser); // Ex : ['nom' => 'Dupont', 'prenom' => 'Jean',
                         <label for="confirm_password" class="form-label">Confirmer nouveau mot de passe :</label>
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Mettre à jour le Mot de Passe</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="maj_mdp" >Mettre à jour le Mot de Passe</button>
+                    <?php
+                    if (isset($_SESSION['popup'])):
+                    ?>
+                    <div class="container my-3">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($_SESSION['popup']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                    </div>
+                    <?php
+                    unset($_SESSION['popup']); // Supprime le message une fois affiché
+                    endif;
+                    ?>
                 </form>
             </div>
         </div>
     </div>
 </body>
 </html>
+
+

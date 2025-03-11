@@ -117,7 +117,7 @@ function connecterUtilisateur($idUtilisateur)
 {
 	// cette fonction affecte le booléen "connecte" à vrai pour l'utilisateur concerné 
 	return SQLUpdate("
-	  UPDATE utilisateur
+	  UPDATE utilisateurs
 	  SET connecte = 1
 	  WHERE id_utilisateur = '$idUtilisateur';
 	");
@@ -127,13 +127,24 @@ function deconnecterUtilisateur($idUtilisateur)
 {
 	// cette fonction affecte le booléen "connecte" à faux pour l'utilisateur concerné 
 	return SQLUpdate("
-	  UPDATE utilisateur
+	  UPDATE utilisateurs
 	  SET connecte = 0
 	  WHERE id_utilisateur = '$idUtilisateur';
 	");
 }
 
 function getMDP($idUtilisateur){
-	
+	return SQLGetChamp("
+		SELECT mot_de_passe FROM utilisateurs
+		WHERE id_utilisateur = '$idUtilisateur';
+	");
+}
+
+function updateMDP($idUtilisateur,$newMDP){
+	return SQLUpdate("
+		UPDATE utilisateurs
+	    SET mot_de_passe = '$newMDP'
+	    WHERE id_utilisateur = '$idUtilisateur';
+	");
 }
 ?>

@@ -83,8 +83,32 @@ session_start();
 				case 'maj_email' :
 
 
-					break;
+				break;
 
+				case 'maj_mdp' :
+					$idUser = valider('idUser', 'SESSION');
+				
+					// Récupération des valeurs depuis le formulaire (POST)
+					$currentMDP = valider('current_password');
+					$storedMDP = getMDP($idUser); // Mot de passe actuel en base de données
+				
+					$newMdp = valider('new_password');
+					$confirmNewMdp = valider('confirm_password');
+				
+					if ($currentMDP === $storedMDP) {
+						if ($newMdp === $confirmNewMdp) {
+							updateMDP($idUser, $newMdp);
+							$_SESSION['popup'] = "Mot de passe changé avec succès";
+						} else {
+							$_SESSION['popup'] = "Merci de saisir des nouveaux mot de passe identiques";
+						}
+					} else {
+						$_SESSION['popup'] = "Mot de passe actuel incorrect";
+					}
+					// Rediriger vers la page userSettings sans passer le message en GET
+					$addArgs = "?view=userSettings#new_email";
+					break;
+				
 		}
 
 	}
