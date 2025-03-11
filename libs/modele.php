@@ -10,10 +10,10 @@ function verifUserBdd($email,$passe)
 {
 	// Vérifie l'identité d'un utilisateur 
 	// dont les identifiants sont passes en paramètre
-	// renvoie faux si user inconnu
+	// renvoie faux si utilisateurs inconnu
 	// renvoie l'id de l'utilisateur si succès
 
-	$SQL="SELECT id FROM user WHERE email='$email' AND passe='$passe'";
+	$SQL="SELECT id_utilisateur FROM utilisateurs WHERE email='$email' AND mot_de_passe='$passe'";
 
 	return SQLGetChamp($SQL);
 	// si on avait besoin de plus d'un champ
@@ -22,120 +22,114 @@ function verifUserBdd($email,$passe)
 
 /********* PARTIE 2 *********/
 
-function isAdmin($idUser)
+function isAdmin($idUtilisateurs)
 {
 	// vérifie si l'utilisateur est un administrateur
-	$SQL ="SELECT type FROM user WHERE id='$idUser' AND type='Admin'";
+	$SQL ="SELECT type_utilisateur FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs' AND role='administrateur'";
 	return SQLGetChamp($SQL); 
 }
 
 
 
-function mkUser($email, $passe, $nom, $prenom, $type)
+function mkUser($prenom, $nom, $email, $passe, $type)
 {
 	// Cette fonction crée un nouvel utilisateur et renvoie l'identifiant de l'utilisateur créé
 	return SQLInsert("
-	  INSERT INTO user(email, passe, nom, prenom, type, connecte)
-	  VALUES ('$email', '$passe', '$nom', '$prenom', '$type', 0);
+	  INSERT INTO utilisateurs(prenom, nom, email, mot_de_passe, type_utilisateur, role)
+	  VALUES ('$prenom', '$nom', '$email', '$passe', '$type', 'utilisateur');
 	");
 }
 
-function rmUser($idUser)
+function rmUser($idUtilisateurs)
 {
 	// Cette fonction crée un nouvel utilisateur et renvoie l'identifiant de l'utilisateur créé
 	return SQLUpdate("
-	  DELETE FROM user WHERE id='$idUser';
+	  DELETE FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs';
 	");
 }
 
-function connecterUtilisateur($idUser)
-{
-	// cette fonction affecte le booléen "connecte" à vrai pour l'utilisateur concerné 
-	return SQLUpdate("
-	  UPDATE user
-	  SET connecte = 1
-	  WHERE id = '$idUser';
-	");
-}
-
-function deconnecterUtilisateur($idUser)
-{
-	// cette fonction affecte le booléen "connecte" à faux pour l'utilisateur concerné 
-	return SQLUpdate("
-	  UPDATE user
-	  SET connecte = 0
-	  WHERE id = '$idUser';
-	");
-}
-
-function changerPasse($idUser,$passe)
+function changerPasse($idUtilisateurs,$passe)
 {
 	// cette fonction modifie le mot de passe d'un utilisateur
 	return SQLUpdate("
-	  UPDATE user
-	  SET passe = '$passe'
-	  WHERE id = '$idUser';
+	  UPDATE utilisateurs
+	  SET mot_de_passe = '$passe'
+	  WHERE id_utilisateur = '$idUtilisateurs';
 	");
 }
 
-function changerEmail($idUser,$email)
+function changerEmail($idUtilisateurs,$email)
 {
 	// cette fonction modifie le email d'un utilisateur
 	return SQLUpdate("
-	  UPDATE user
-	  SET pseudo = '$email'
-	  WHERE id = '$idUser';
+	  UPDATE utilisateurs
+	  SET email = '$email'
+	  WHERE id_utilisateur = '$idUtilisateurs';
 	");
 }
 
-function promouvoirAdmin($idUser)
+function promouvoirAdmin($idUtilisateurs)
 {
 	// cette fonction fait de l'utilisateur un administrateur
 	return SQLUpdate("
-	  UPDATE user
-	  SET admin = 1
-	  WHERE id = '$idUser';
+	  UPDATE utilisateurs
+	  SET role = 'administrateur'
+	  WHERE id_utilisateur = '$idUtilisateurs';
 	");
 }
 
-function retrograderUser($idUser)
+function retrograderutilisateurs($idUtilisateurs)
 {
 	// cette fonction fait de l'utilisateur un simple mortel
 	return SQLUpdate("
-	  UPDATE user
-	  SET admin = 0
-	  WHERE id = '$idUser';
+	  UPDATE utilisateurs
+	  SET role = 'utilisateur'
+	  WHERE id_utilisateur = '$idUtilisateurs';
 	");
 }
 
-function whoIsHe($idUser){
+function whoIsHe($idUtilisateurs){
 	// Cette fonction renvoie le type de l'utilisateur
-	$SQL ="SELECT type FROM user WHERE id='$idUser'";
+	$SQL ="SELECT type_utilisateur FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs'";
 	return SQLGetChamp($SQL);
 }
 
-function getNom($idUser){
+function getNom($idUtilisateurs){
 	// Cette fonction renvoie le nom de l'utilisateur
-	$SQL ="SELECT nom FROM user WHERE id='$idUser'";
+	$SQL ="SELECT nom FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs'";
 	return SQLGetChamp($SQL);	
 }
 
-function getPrenom($idUser){
+function getPrenom($idUtilisateurs){
 	// Cette fonction renvoie le Prenom de l'utilisateur
-	$SQL ="SELECT Prenom FROM user WHERE id='$idUser'";
+	$SQL ="SELECT prenom FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs'";
 	return SQLGetChamp($SQL);	
 }
 
-function ajouterRendezVous($id_utilisateur, $date_heure, $description = "") {
-    // Préparez la requête SQL pour insérer un nouveau rendez-vous.
-    $sql = "INSERT INTO rendez_vous (id_utilisateur, date_heure, description) VALUES (:id_utilisateur, :date_heure, :description)";
-    // SQLInsert() est une fonction de votre librairie maLibSQL.pdo.php qui exécute la requête préparée.
-    return SQLInsert($sql, [
-         "id_utilisateur" => $id_utilisateur,
-         "date_heure" => $date_heure,
-         "description" => $description
-    ]);
+function getUtilisateur($idUtilisateurs){
+	return parcoursRs(SQLSelect("
+	SELECT * FROM utilisateurs 
+	WHERE id_utilisateur='$idUtilisateurs'
+    "));
 }
 
+function connecterUtilisateur($idUtilisateur)
+{
+	// cette fonction affecte le booléen "connecte" à vrai pour l'utilisateur concerné 
+	return SQLUpdate("
+	  UPDATE utilisateur
+	  SET connecte = 1
+	  WHERE id_utilisateur = '$idUtilisateur';
+	");
+}
 
+function deconnecterUtilisateur($idUtilisateur)
+{
+	// cette fonction affecte le booléen "connecte" à faux pour l'utilisateur concerné 
+	return SQLUpdate("
+	  UPDATE utilisateur
+	  SET connecte = 0
+	  WHERE id_utilisateur = '$idUtilisateur';
+	");
+}
 ?>

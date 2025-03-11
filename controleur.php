@@ -51,7 +51,6 @@ session_start();
 							setcookie("remember",false, time()-3600);
 						}
 						$idUser=valider('idUser','SESSION');
-                        connecterUtilisateur($idUser);
 						$addArgs="?view=accueil";
 					}	
 				}
@@ -61,51 +60,30 @@ session_start();
 
 			case 'Logout' :
 				$idUser=valider('idUser','SESSION');
-				deconnecterUtilisateur($idUser);
 				session_destroy();
 			break;
 
 			case 'creer compte' : 
-				if ($email = valider("login"))
+				if ($email = valider("email"))
 				if ($passe = valider("passe"))
 				if ($nom = valider("nom"))
 				if ($prenom = valider("prenom"))
 				if ($type = valider("type"))
-				{	
+				{
 					if (!(verifUserBdd($email,$passe))){
-						mkUser($email,$passe,$nom,$prenom,$type);
+						mkUser($prenom,$nom,$email,$passe,$type);
 						$addArgs="?view=login";
 					} else {
 						$addArgs="?view=register";
 					}
 					
 				}
-				
-				case 'confirmer_rdv':
-					// Récupère l'identifiant de l'utilisateur depuis la session
-					$id_utilisateur = valider("idUser", "SESSION");
-					// Récupère la date et l'heure sélectionnées envoyées en POST
-					$selectedDate = valider("day");
-					$selectedTime = valider("selectedTime");
-				
-					if ($id_utilisateur && $selectedDate && $selectedTime) {
-						 // Combine la date et l'heure pour créer un datetime au format SQL
-						 $date_heure = date("Y-m-d H:i:s", strtotime($selectedDate . " " . $selectedTime));
-						 
-						 // Appel à une fonction modèle pour insérer le rendez-vous dans la BDD
-						 if (ajouterRendezVous($id_utilisateur, $date_heure, "")) {
-							  // Si insertion réussie, redirige vers une vue de confirmation (à adapter)
-							  $addArgs = "?view=confirmation_rdv";
-						 } else {
-							  // En cas d'erreur d'insertion
-							  $addArgs = "?view=planning&error=insert";
-						 }
-					} else {
-						 // Si des données sont manquantes
-						 $addArgs = "?view=planning&error=missing_data";
-					}
 				break;
-				
+			
+				case 'maj_email' :
+
+
+					break;
 
 		}
 

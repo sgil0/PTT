@@ -1,3 +1,3 @@
 <html>
-    <h1> Actu </h1>
-<html>
+    <h1>Actu</h1>
+</html>

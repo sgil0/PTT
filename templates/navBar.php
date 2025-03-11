@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-  <a class="navbar-brand" href="#">
+  <a class="navbar-brand" href="./index.php?view=accueil">
       <img src="./ressources/logoPinf.png" alt="Logo" width="60" height="49" class="d-inline-block align-text-top">
     </a>
 
