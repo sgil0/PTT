@@ -22,10 +22,10 @@ function verifUserBdd($email,$passe)
 
 /********* PARTIE 2 *********/
 
-function isAdmin($idUtilisateurs)
+function isAdmin($idUtilisateur)
 {
 	// vérifie si l'utilisateur est un administrateur
-	$SQL ="SELECT type_utilisateur FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs' AND role='administrateur'";
+	$SQL ="SELECT type_utilisateur FROM utilisateurs WHERE id_utilisateur='$idUtilisateur' AND role='administrateur'";
 	return SQLGetChamp($SQL); 
 }
 
@@ -40,76 +40,76 @@ function mkUser($prenom, $nom, $email, $passe, $type)
 	");
 }
 
-function rmUser($idUtilisateurs)
+function rmUser($idUtilisateur)
 {
 	// Cette fonction crée un nouvel utilisateur et renvoie l'identifiant de l'utilisateur créé
 	return SQLUpdate("
-	  DELETE FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs';
+	  DELETE FROM utilisateurs WHERE id_utilisateur='$idUtilisateur';
 	");
 }
 
-function changerPasse($idUtilisateurs,$passe)
+function changerPasse($idUtilisateur,$passe)
 {
 	// cette fonction modifie le mot de passe d'un utilisateur
 	return SQLUpdate("
 	  UPDATE utilisateurs
 	  SET mot_de_passe = '$passe'
-	  WHERE id_utilisateur = '$idUtilisateurs';
+	  WHERE id_utilisateur = '$idUtilisateur';
 	");
 }
 
-function changerEmail($idUtilisateurs,$email)
+function changerEmail($idUtilisateur,$email)
 {
 	// cette fonction modifie le email d'un utilisateur
 	return SQLUpdate("
 	  UPDATE utilisateurs
 	  SET email = '$email'
-	  WHERE id_utilisateur = '$idUtilisateurs';
+	  WHERE id_utilisateur = '$idUtilisateur';
 	");
 }
 
-function promouvoirAdmin($idUtilisateurs)
+function promouvoirAdmin($idUtilisateur)
 {
 	// cette fonction fait de l'utilisateur un administrateur
 	return SQLUpdate("
 	  UPDATE utilisateurs
 	  SET role = 'administrateur'
-	  WHERE id_utilisateur = '$idUtilisateurs';
+	  WHERE id_utilisateur = '$idUtilisateur';
 	");
 }
 
-function retrograderutilisateurs($idUtilisateurs)
+function retrograderutilisateurs($idUtilisateur)
 {
 	// cette fonction fait de l'utilisateur un simple mortel
 	return SQLUpdate("
 	  UPDATE utilisateurs
 	  SET role = 'utilisateur'
-	  WHERE id_utilisateur = '$idUtilisateurs';
+	  WHERE id_utilisateur = '$idUtilisateur';
 	");
 }
 
-function whoIsHe($idUtilisateurs){
+function whoIsHe($idUtilisateur){
 	// Cette fonction renvoie le type de l'utilisateur
-	$SQL ="SELECT type_utilisateur FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs'";
+	$SQL ="SELECT type_utilisateur FROM utilisateurs WHERE id_utilisateur='$idUtilisateur'";
 	return SQLGetChamp($SQL);
 }
 
-function getNom($idUtilisateurs){
+function getNom($idUtilisateur){
 	// Cette fonction renvoie le nom de l'utilisateur
-	$SQL ="SELECT nom FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs'";
+	$SQL ="SELECT nom FROM utilisateurs WHERE id_utilisateur='$idUtilisateur'";
 	return SQLGetChamp($SQL);	
 }
 
-function getPrenom($idUtilisateurs){
+function getPrenom($idUtilisateur){
 	// Cette fonction renvoie le Prenom de l'utilisateur
-	$SQL ="SELECT prenom FROM utilisateurs WHERE id_utilisateur='$idUtilisateurs'";
+	$SQL ="SELECT prenom FROM utilisateurs WHERE id_utilisateur='$idUtilisateur'";
 	return SQLGetChamp($SQL);	
 }
 
-function getUtilisateur($idUtilisateurs){
+function getUtilisateur($idUtilisateur){
 	return parcoursRs(SQLSelect("
 	SELECT * FROM utilisateurs 
-	WHERE id_utilisateur='$idUtilisateurs'
+	WHERE id_utilisateur='$idUtilisateur'
     "));
 }
 
@@ -131,5 +131,9 @@ function deconnecterUtilisateur($idUtilisateur)
 	  SET connecte = 0
 	  WHERE id_utilisateur = '$idUtilisateur';
 	");
+}
+
+function getMDP($idUtilisateur){
+	
 }
 ?>
