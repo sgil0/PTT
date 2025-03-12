@@ -51,6 +51,7 @@ session_start();
 							setcookie("remember",false, time()-3600);
 						}
 						$idUser=valider('idUser','SESSION');
+						connecterUtilisateur($idUser);
 						$addArgs="?view=accueil";
 					}	
 				}
@@ -60,6 +61,7 @@ session_start();
 
 			case 'Logout' :
 				$idUser=valider('idUser','SESSION');
+				deconnecterUtilisateur($idUser);
 				session_destroy();
 			break;
 
@@ -80,10 +82,74 @@ session_start();
 				}
 				break;
 			
-				case 'maj_email' :
+				case 'maj_email':
+					// Traitement du formulaire de changement d'email
+					if (isset($_POST['maj_email_submit'])) {
+						if (!isset($_SESSION['idUser'])) {
+							$_SESSION['popupEmail'] = "Vous devez être connecté pour changer votre email.";
+							die();
+						}
+						$userId = valider('idUser','SESSION');
+						$currentPassword = valider('current_password2');
+						$newEmail = filter_var($_POST['new_email'], FILTER_VALIDATE_EMAIL);
+						
+						if (!$newEmail) {
+							$_SESSION['popupEmail'] = "L'email saisi n'est pas valide.";
+							die();
+						}
+						
+						// Vérification du mot de passe de l'utilisateur
+						$storedMDP = getMDP($userId);
+						if ($storedMDP != $currentPassword) {
+							$_SESSION['popupEmail'] = "Mot de passe incorrect.";
+							die();
+						}
+						
+						// Génération d'un token sécurisé et définition de son expiration (24h)
+						$token = bin2hex(random_bytes(32));
+						$expiration = date("Y-m-d H:i:s", strtotime('+24 hours'));
+						
+						// Insertion de la demande dans la table dédiée
+						mkEmailChangeRequest($userId, $newEmail, $token, $expiration);
+						
+						// Envoi de l'email de confirmation
+						$confirmationLink = "https://localhost/controleur.php?action=maj_email&token=" . $token;
+						$subject = "Confirmez votre changement d'email";
+						$message = "Bonjour,\n\nPour confirmer le changement de votre adresse email, cliquez sur le lien ci-dessous :\n" 
+									. $confirmationLink 
+									. "\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet email.";
+						mail($newEmail, $subject, $message);
+						
+						$_SESSION['popupEmail'] = "Un email de confirmation vous a été envoyé à " . htmlspecialchars($newEmail) . ".";
+					}
+					// Traitement de la confirmation via le token
+					elseif (isset($_GET['token'])) {
+						$token = $_GET['token'];
+						$request = getEmailChangeRequest($token);
 
+						
+						if (!$request) {
+							die("Lien de confirmation invalide.");
+						}
+						
+						if (strtotime($request['expires_at']) < time()) {
+							die("Le lien de confirmation a expiré.");
+						}
+						
+						// Mise à jour de l'email dans la table users
+						updateMDP($request['id_utilisateur'], $request['new_email']);
+						
+						// Invalider le token
+						deleteToken($token);
 
-				break;
+						$_SESSION['popupEmail'] = "Votre adresse email a été mise à jour avec succès.";
+					}
+					else {
+						$_SESSION['popupEmail'] = "Aucune demande valide.";
+					}
+					$addArgs = "?view=userSettings";
+					break;
+			
 
 				case 'maj_mdp' :
 					$idUser = valider('idUser', 'SESSION');
@@ -98,12 +164,12 @@ session_start();
 					if ($currentMDP === $storedMDP) {
 						if ($newMdp === $confirmNewMdp) {
 							updateMDP($idUser, $newMdp);
-							$_SESSION['popup'] = "Mot de passe changé avec succès";
+							$_SESSION['popupMdp'] = "Mot de passe changé avec succès";
 						} else {
-							$_SESSION['popup'] = "Merci de saisir des nouveaux mot de passe identiques";
+							$_SESSION['popupMdp'] = "Merci de saisir des nouveaux mot de passe identiques";
 						}
 					} else {
-						$_SESSION['popup'] = "Mot de passe actuel incorrect";
+						$_SESSION['popupMdp'] = "Mot de passe actuel incorrect";
 					}
 					// Rediriger vers la page userSettings sans passer le message en GET
 					$addArgs = "?view=userSettings#new_email";

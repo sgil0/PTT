@@ -147,4 +147,33 @@ function updateMDP($idUtilisateur,$newMDP){
 	    WHERE id_utilisateur = '$idUtilisateur';
 	");
 }
+
+function mkEmailChangeRequest($idUtilisateur, $newEmail, $token, $expiration){
+	return SQLInsert("
+	INSERT INTO email_change_requests (id_utilisateur, new_email, token, expires_at) 
+	VALUES ('$idUtilisateur', '$newEmail', '$token', '$expiration')
+	");
+}
+
+function getEmailChangeRequest($token){
+	return parcoursRs(SQLSelect("
+	SELECT * FROM email_change_requests 
+	WHERE token = '$token'
+    "));
+}
+
+function updateMail($idUtilisateur, $newEmail){
+	return SQLUpdate("
+	UPDATE utilisateurs
+	SET email = '$newEmail'
+	WHERE id_utilisateur = '$idUtilisateur';
+	");
+}
+
+function deleteToken($token){
+	return SQLUpdate("
+	DELETE FROM email_change_requests 
+	WHERE token = '$token'
+	");
+}
 ?>
