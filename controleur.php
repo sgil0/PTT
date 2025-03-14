@@ -84,6 +84,37 @@ session_start();
 
 
 					break;
+				
+				case 'confirmer_rdv':
+						
+						// 1. On récupère l'utilisateur connecté (par ex. stocké en session)
+						$id_utilisateur = valider('idUser', 'SESSION');
+						var_dump($id_utilisateur);
+						
+						// 2. On récupère la date et l'heure sélectionnées (POST ou GET selon votre code)
+						$selectedDate = valider('day');
+						$selectedTime = valider('selectedTime');
+						
+						if ($id_utilisateur && $selectedDate && $selectedTime) {
+							// 3. On combine date + heure en un DATETIME au format SQL
+							$date_heure = date("Y-m-d H:i:s", strtotime("$selectedDate $selectedTime"));
+					
+							// 4. On insère le rendez-vous via la fonction du modèle
+							if (ajouterRendezVous($id_utilisateur, $date_heure, "Mon appel téléphonique")) {
+								// Insertion OK : redirection vers planning avec un paramètre de confirmation
+								$addArgs = "?view=planning&confirmation=ok";
+							} else {
+								// Erreur d'insertion
+								$addArgs = "?view=planning&error=insert";
+							}
+						} else {
+							// Données manquantes
+							$addArgs = "?view=planning&error=missing_data";
+						}
+					break;
+					
+					
+					
 
 		}
 

@@ -136,4 +136,29 @@ function deconnecterUtilisateur($idUtilisateur)
 function getMDP($idUtilisateur){
 	
 }
+
+function ajouterRendezVous($id_utilisateur, $date_heure, $description = "")
+{
+    // Table "rendez_vous" et colonnes : id_utilisateur, date_heure, description, statut
+    // statut a une valeur par défaut ('confirmé'), donc pas nécessaire de l'insérer si on veut la valeur par défaut
+
+    // SQLInsert(...) : votre fonction d'exécution (maLibSQL.pdo.php) qui renvoie l'ID inséré ou false en cas d'erreur
+    return SQLInsert("
+	  INSERT INTO rendez_vous(id_utilisateur, date_heure, description)
+	  VALUES ('$id_utilisateur', '$date_heure', '$description');
+	");
+}
+
+function getRendezVousByDate($date) {
+    // On récupère uniquement l'heure au format HH:MM pour les rendez-vous de la date donnée
+    $sql = "SELECT DATE_FORMAT(date_heure, '%H:%i') as time 
+            FROM rendez_vous 
+            WHERE DATE(date_heure) = '$date'";
+    // SQLSelect() retourne un tableau de lignes (tableau associatif)
+    return SQLSelect($sql);
+}
+
+
+
+
 ?>
