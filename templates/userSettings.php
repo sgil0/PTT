@@ -11,6 +11,7 @@ $idUser=valider('idUser','SESSION');
 // var_dump($idUser);
 $user = getUtilisateur($idUser); // Ex : ['nom' => 'Dupont', 'prenom' => 'Jean', 'email' => 'jean.dupont@example.com']
 // var_dump($user);
+  
 ?>
 
 <body>
@@ -29,21 +30,39 @@ $user = getUtilisateur($idUser); // Ex : ['nom' => 'Dupont', 'prenom' => 'Jean',
             </div>
         </div>
 
-        <!-- Formulaire pour modifier l'Email -->
+        <!-- Formulaire de changement d'email -->
         <div class="card mb-4">
             <div class="card-header">
-                Modifier l'Email
+                Changer mon email
             </div>
             <div class="card-body">
-                <form method="post" action="controleur.php">
+                <form method="post" action="controleur.php?action=maj_email">
                     <div class="mb-3">
-                        <label for="new_email" class="form-label">Nouvel Email :</label>
-                        <input type="email" class="form-control" id="new_email" name="new_email" required>
+                        <label for="current_password" class="form-label">Mot de passe actuel :</label>
+                        <input type="password" id="current_password2" name="current_password2" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"  value="maj_email">Mettre à jour l'Email</button>
+                    <div class="mb-3">
+                        <label for="new_email" class="form-label">Nouvel email :</label>
+                        <input type="email" id="new_email" name="new_email" class="form-control" required>
+                    </div>
+                    <button type="submit" name="maj_email_submit" class="btn btn-primary"  >Changer mon email</button>
+                    <?php
+                    if (isset($_SESSION['popupEmail'])):
+                    ?>
+                    <div class="container my-3">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($_SESSION['popupEmail']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                    </div>
+                    <?php
+                    unset($_SESSION['popupEmail']); // Supprime le message une fois affiché
+                    endif;
+                    ?>
                 </form>
             </div>
         </div>
+        <!-- Fin du formulaire -->
 
         <!-- Formulaire pour modifier le mot de passe -->
         <div class="card mb-4">
@@ -64,10 +83,25 @@ $user = getUtilisateur($idUser); // Ex : ['nom' => 'Dupont', 'prenom' => 'Jean',
                         <label for="confirm_password" class="form-label">Confirmer nouveau mot de passe :</label>
                         <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Mettre à jour le Mot de Passe</button>
+                    <button type="submit" class="btn btn-primary" name="action" value="maj_mdp" >Mettre à jour le mot de passe</button>
+                    <?php
+                    if (isset($_SESSION['popupMdp'])):
+                    ?>
+                    <div class="container my-3">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($_SESSION['popupMdp']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                    </div>
+                    <?php
+                    unset($_SESSION['popupMdp']); // Supprime le message une fois affiché
+                    endif;
+                    ?>
                 </form>
             </div>
         </div>
     </div>
 </body>
 </html>
+
+
