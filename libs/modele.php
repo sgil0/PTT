@@ -204,8 +204,6 @@ function isUserAdmin($idUser) {
 
     // Récupère la valeur du champ "role" pour cet utilisateur
     $role = SQLGetChamp($sql);
-	var_dump($role); // Affiche la valeur exacte du rôle
-    var_dump($role === "administrateur"); // Vérifie si la comparaison fonctionne
     // Compare avec la chaîne "administrateur" (attention à l'orthographe)
     return ($role === "administrateur");
 }

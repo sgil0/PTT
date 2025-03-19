@@ -1,9 +1,9 @@
 
 <?php
-// On vérifie si l'utilisateur est connecté et si c'est un admin
-    if (isset($_SESSION['id_utilisateur'])) {
-    $idUser = $_SESSION['id_utilisateur'];
-    $isAdmin = isUserAdmin($idUser); // Appelle la fonction
+// Vérifie si l'utilisateur est connecté et récupère son ID
+if (isset($_SESSION['idUser'])) { // Utilisation correcte de la session
+    $idUser = $_SESSION['idUser']; 
+    $isAdmin = isUserAdmin($idUser);
 } else {
     $isAdmin = false; // L'utilisateur n'est pas connecté
 }
@@ -38,15 +38,16 @@
     </div>
 
     <script>
+        $("#edit").hide();
         $(document).ready(function () {
             $("#edit-btn").click(function () {
-                $("#view-section").hide();
-                $("#edit-section").show();
+                $("#view").hide();
+                $("#edit").show();
             });
 
             $("#cancel-btn, #save-btn").click(function () {
-                $("#edit-section").hide();
-                $("#view-section").show();
+                $("#edit").hide();
+                $("#view").show();
             });
         });
     </script>
