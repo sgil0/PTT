@@ -1,4 +1,14 @@
 
+<?php
+// On vérifie si l'utilisateur est connecté et si c'est un admin
+    if (isset($_SESSION['id_utilisateur'])) {
+    $idUser = $_SESSION['id_utilisateur'];
+    $isAdmin = isUserAdmin($idUser); // Appelle la fonction
+} else {
+    $isAdmin = false; // L'utilisateur n'est pas connecté
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,15 +22,6 @@
 </head>
 <body>
     <h1>Simulateur</h1>
-<?php
-// On vérifie si l'utilisateur est connecté et si c'est un admin
-    if (isset($_SESSION['id_utilisateur'])) {
-    $idUser = $_SESSION['id_utilisateur'];
-    $isAdmin = isUserAdmin($idUser); // Appelle la fonction
-} else {
-    $isAdmin = false; // L'utilisateur n'est pas connecté
-}
-?>
 
     <div id="view">
         <p>Contenu de la page...</p>
