@@ -125,6 +125,9 @@ CREATE TABLE IF NOT EXISTS `utilisateurs` (
 INSERT INTO `utilisateurs` (`id_utilisateur`, `prenom`, `nom`, `email`, `mot_de_passe`, `notif_actu`, `notif_dossier`, `type_utilisateur`, `role`, `date_creation`, `connecte`) VALUES
 (2, 'Samuel', 'GILLON', 'test@gmail.com', 'test', 0, 0, 'particulier', 'utilisateur', '2025-03-11 08:52:37', 0);
 
+INSERT INTO `utilisateurs` (`id_utilisateur`, `prenom`, `nom`, `email`, `mot_de_passe`, `notif_actu`, `notif_dossier`, `type_utilisateur`, `role`, `date_creation`, `connecte`) VALUES
+(3, 'Admin', 'TEST', 'admin@gmail.com', 'admin', 0, 0, 'particulier', 'administrateur', '2025-03-11 08:52:37', 0);
+
 --
 -- Contraintes pour les tables déchargées
 --
