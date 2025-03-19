@@ -81,6 +81,25 @@ session_start();
 					
 				}
 				break;
+
+				case 'confirmer_rdv':
+					$id_utilisateur = valider('idUser','SESSION');
+					$selectedDate   = valider('day');
+					$selectedTime   = valider('selectedTime');
+					$description = valider('description');
+				
+					if ($id_utilisateur && $selectedDate && $selectedTime) {
+						$date_heure = date("Y-m-d H:i:s", strtotime("$selectedDate $selectedTime"));
+						if (ajouterRendezVous($id_utilisateur, $date_heure, $description)) {
+							$addArgs = "?view=planning&confirmation=ok";
+						} else {
+							$addArgs = "?view=planning&error=insert";
+						}
+					} else {
+						$addArgs = "?view=planning&error=missing_data";
+					}
+				break;
+				
 			
 				case 'maj_email':
 					// Traitement du formulaire de changement d'email

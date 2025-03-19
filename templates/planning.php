@@ -1,10 +1,11 @@
 <?php
-
-// Vérifier si l'utilisateur est connecté ; sinon, rediriger vers l'accueil
+//session_start();
+// Rediriger vers l'accueil si l'utilisateur n'est pas connecté
 if (!isset($_SESSION['idUser'])) {
     header("Location: index.php?view=accueil");
     exit();
 }
+
 // ----------------------
 // 1) PARAMÈTRES DE BASE
 // ----------------------
@@ -97,8 +98,7 @@ if ($reservedAppointments) {
     <!-- Titre et description -->
     <h1 class="text-2xl font-bold mb-2">Prenez rendez-vous</h1>
     <p class="mb-4 text-gray-700">
-        Planifiez un appel personnalisé avec notre équipe d'experts pour discuter de vos besoins 
-        et obtenir des conseils sur mesure. Gratuit • 15 minutes
+        Planifiez un appel personnalisé avec notre équipe d'experts pour discuter de vos besoins et obtenir des conseils sur mesure. Gratuit • 15 minutes
     </p>
 
     <!-- Navigation : semaine précédente / jours / semaine suivante -->
@@ -148,9 +148,13 @@ if ($reservedAppointments) {
         <?php endforeach; ?>
     </div>
 
-    <!-- Zone d'affichage de la sélection -->
+    <!-- Zone d'affichage de la sélection et de la description -->
     <div id="selectedInfo" class="mt-6 p-4 bg-gray-100 rounded shadow-md" style="display:none;">
         <p class="mb-2" id="selectedDisplay"></p>
+        <div class="mb-2">
+            <label for="rdvDescription" class="block text-gray-700 mb-1">Description du rendez-vous :</label>
+            <textarea id="rdvDescription" rows="3" class="w-full border rounded p-2" placeholder="Entrez ici la description du rendez-vous"></textarea>
+        </div>
         <button id="confirmButton" class="px-4 py-2 bg-green-500 text-white rounded shadow hover:bg-green-600">Confirmer le rendez-vous</button>
     </div>
 
@@ -184,33 +188,47 @@ $(document).ready(function() {
         $(this).removeClass('bg-gray-100 hover:bg-gray-200').addClass('bg-blue-500 text-white');
     });
 
-    // Envoi en AJAX lors de la confirmation
+    // Envoi en AJAX lors de la confirmation, avec description
     $('#confirmButton').on('click', function(e) {
         e.preventDefault();
         var selectedTime = $('#hiddenSelectedTime').val();
         var selectedDate = $('#hiddenSelectedDate').val();
+        var description = $('#rdvDescription').val(); // Récupère la description saisie
         if (!selectedTime) {
             $('#confirmationMessage').html("<div class='p-2 bg-red-100 text-red-700 rounded'>Veuillez sélectionner un créneau.</div>");
             return;
         }
-
+        // Désactiver le bouton pour éviter le spam
         $('#confirmButton').prop('disabled', true);
-
         $.ajax({
             url: 'controleur.php',
             type: 'POST',
             data: {
                 action: 'confirmer_rdv',
                 selectedTime: selectedTime,
-                day: selectedDate
+                day: selectedDate,
+                description: description
             },
             success: function(response) {
                 $('#confirmationMessage').html("<div class='p-2 bg-green-100 text-green-700 rounded'>Votre rendez-vous a bien été enregistré !</div>");
                 $('#selectedInfo').fadeOut();
-                // Vous pouvez ici rafraîchir dynamiquement la liste des créneaux réservés si nécessaire
+                // Rafraîchir dynamiquement les créneaux pour mettre à jour les disponibilités
+                $.ajax({
+                    url: '<?= basename(__FILE__); ?>',
+                    type: 'GET',
+                    data: {
+                        ajax: 1,
+                        day: selectedDate,
+                        start: '<?= $startDate ?>'
+                    },
+                    success: function(data) {
+                        $('#timeSlots').html(data);
+                    }
+                });
             },
             error: function(xhr, status, error) {
                 $('#confirmationMessage').html("<div class='p-2 bg-red-100 text-red-700 rounded'>Une erreur est survenue : " + error + "</div>");
+                $('#confirmButton').prop('disabled', false);
             }
         });
     });

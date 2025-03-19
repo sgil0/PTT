@@ -198,6 +198,30 @@ function getRendezVousByDate($date) {
     return SQLSelect($sql);
 }
 
+function getActualites() {
+    // Requête SQL pour sélectionner les champs nécessaires
+    $sql = "SELECT id_actualite, titre, contenu, image_actu, date_publication, id_auteur FROM actualites ORDER BY id_actualite DESC";
+    
+    // Exécution de la requête grâce à la fonction SQLSelect() définie dans maLibSQL.pdo.php
+    $actualites = SQLSelect($sql);
+
+	
+    
+    return $actualites;
+}
+
+function isUserAdmin($idUser) {
+    // Prépare la requête avec un paramètre pour éviter l'injection SQL
+    $sql = "SELECT role FROM utilisateurs WHERE id_utilisateur = $idUser";
+
+    // Récupère la valeur du champ "role" pour cet utilisateur
+    $role = SQLGetChamp($sql);
+
+    // Compare avec la chaîne "administrateur" (attention à l'orthographe)
+    return ($role === "administrateur");
+}
+
+
 
 
 
