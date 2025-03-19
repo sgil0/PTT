@@ -198,7 +198,6 @@ function getRendezVousByDate($date) {
     return SQLSelect($sql);
 }
 
-/*
 function isUserAdmin($idUser) {
     // Prépare la requête avec un paramètre pour éviter l'injection SQL
     $sql = "SELECT role FROM utilisateurs WHERE id_utilisateur = $idUser";
@@ -210,9 +209,6 @@ function isUserAdmin($idUser) {
     // Compare avec la chaîne "administrateur" (attention à l'orthographe)
     return ($role === "administrateur");
 }
-*/
-function isUserAdmin($idUser) {
-    die("isUserAdmin appelée"); // Arrête le script et affiche ce message
-}
+
 
 ?>
