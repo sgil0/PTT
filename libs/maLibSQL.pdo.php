@@ -1,7 +1,13 @@
 <?php
 
 include_once "config.php";
-
+global $dbh; // Déclarer la variable comme globale
+try {
+    $dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base;charset=utf8", $BDD_user, $BDD_password);
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("<font color=\"red\">Erreur de connexion : " . $e->getMessage() . "</font>");
+}
 /**
  * @file maLibSQL.php
  * Ce fichier définit les fonctions de requêtage
@@ -25,6 +31,7 @@ function SQLUpdate($sql)
 	global $BDD_base;
 	global $BDD_user;
 	global $BDD_password;
+
 
 	try {
 		$dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base", $BDD_user, $BDD_password);

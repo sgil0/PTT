@@ -128,6 +128,22 @@ INSERT INTO `utilisateurs` (`id_utilisateur`, `prenom`, `nom`, `email`, `mot_de_
 INSERT INTO `utilisateurs` (`id_utilisateur`, `prenom`, `nom`, `email`, `mot_de_passe`, `notif_actu`, `notif_dossier`, `type_utilisateur`, `role`, `date_creation`, `connecte`) VALUES
 (3, 'Admin', 'TEST', 'admin@gmail.com', 'admin', 0, 0, 'particulier', 'administrateur', '2025-03-11 08:52:37', 0);
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `simulations`
+--
+
+DROP TABLE IF EXISTS `simulations`;
+CREATE TABLE simulations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 --
 -- Contraintes pour les tables déchargées
 --
@@ -151,6 +167,8 @@ ALTER TABLE `dossiers`
 ALTER TABLE `rendez_vous`
   ADD CONSTRAINT `rendez_vous_ibfk_1` FOREIGN KEY (`id_utilisateur`) REFERENCES `utilisateurs` (`id_utilisateur`) ON DELETE CASCADE;
 COMMIT;
+
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

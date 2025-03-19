@@ -8,8 +8,10 @@ session_start();
 	include_once "libs/maLibSecurisation.php"; 
 	include_once "libs/modele.php"; 
 
-
 	$addArgs = "";
+
+	global $dbh; // Je déclare $dbh comme variable globale pour pouvoir l'utiliser dans les fonctions
+
 
 	if ($action = valider("action"))
 	{
@@ -176,7 +178,23 @@ session_start();
 					$addArgs = "?view=userSettings#new_email";
 					break;
 
+				case 'ajouter_simulation' :
+					include_once "libs/maLibSQL.pdo.php";
+
+					$titre = $_POST['titre'];
+					$description = $_POST['description'];
+				
+					// Insérer la simulation en BDD
+					$sql = "INSERT INTO simulations (titre, description) VALUES (:titre, :description)";
+					$stmt = $dbh->prepare($sql);
+					$stmt->execute(['titre' => $titre, 'description' => $description]);
+				
+					// Redirection après insertion
+					header("Location: index.php?view=simulateur");
+					exit();
+				break;
 		}
+
 
 	}
 
