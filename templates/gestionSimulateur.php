@@ -118,3 +118,4 @@ function toggleProps() {
     document.getElementById("propositionsBlock").style.display = (type === 'select') ? 'block' : 'none';
 }
 </script>
+<a href="index.php?view=gestionPrimes" class="btn btn-outline-success">🎁 Gérer les primes</a>

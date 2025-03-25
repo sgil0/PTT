@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `dossiers` (
 --
 -- Structure de la table `primes`
 --
-
+/*
 DROP TABLE IF EXISTS `primes`;
 CREATE TABLE IF NOT EXISTS `primes` (
   `id_prime` int NOT NULL AUTO_INCREMENT,
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `primes` (
   `date_mise_a_jour` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_prime`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+*/
 -- --------------------------------------------------------
 
 --
@@ -143,8 +143,8 @@ CREATE TABLE simulations (
 );
 
 
-DROP TABLE IF EXISTS `questions`;
-CREATE TABLE questions (
+
+CREATE TABLE IF NOT EXISTS questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     question TEXT NOT NULL,
     type ENUM('bool', 'select', 'number') NOT NULL
@@ -158,22 +158,24 @@ CREATE TABLE propositions (
     FOREIGN KEY (question_id) REFERENCES questions(id)
 );
 
-DROP TABLE IF EXISTS `aides`;
-CREATE TABLE aides (
+DROP TABLE IF EXISTS conditions_primes;
+DROP TABLE IF EXISTS `primes`;
+CREATE TABLE primes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255),
-    description TEXT
+    description TEXT,
+    image VARCHAR(255)
 );
 
-DROP TABLE IF EXISTS `conditions_aides`;
-CREATE TABLE conditions_aides (
+CREATE TABLE IF NOT EXISTS conditions_primes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    aide_id INT,
+    prime_id INT,
     question_id INT,
     valeur_attendue TEXT,
-    FOREIGN KEY (aide_id) REFERENCES aides(id),
-    FOREIGN KEY (question_id) REFERENCES questions(id)
+    FOREIGN KEY (prime_id) REFERENCES primes(id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
+
 
 
 --
@@ -189,10 +191,11 @@ ALTER TABLE `actualites`
 --
 -- Contraintes pour la table `dossiers`
 --
+/*
 ALTER TABLE `dossiers`
   ADD CONSTRAINT `dossiers_ibfk_1` FOREIGN KEY (`id_utilisateur`) REFERENCES `utilisateurs` (`id_utilisateur`) ON DELETE CASCADE,
   ADD CONSTRAINT `dossiers_ibfk_2` FOREIGN KEY (`id_prime`) REFERENCES `primes` (`id_prime`) ON DELETE SET NULL;
-
+*/
 --
 -- Contraintes pour la table `rendez_vous`
 --
