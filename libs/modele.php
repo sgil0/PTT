@@ -222,13 +222,14 @@ function isUserAdmin($idUser) {
 
 function getActuById($idActu) {
     // Prépare la requête avec un paramètre pour éviter l'injection SQL
-    $sql = "SELECT * FROM actualites WHERE id_actualite = $idActu";
-
-    // Récupère la valeur du champ "role" pour cet utilisateur
-    $actu = SQLSelect($sql);
-
-    // Compare avec la chaîne "administrateur" (attention à l'orthographe)
-    return $actu;
+    $actu = SQLSelect("
+	SELECT * FROM actualites 
+	WHERE id_actualite = $idActu
+	");
+	if ($actu && count($actu) > 0) {
+        return $actu[0]; // On renvoie la première (et unique) ligne sous forme de tableau associatif
+    }
+	return false;
 }
 
 function updateActu($id, $titre, $contenu) {

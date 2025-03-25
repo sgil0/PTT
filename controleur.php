@@ -205,6 +205,7 @@ session_start();
 					// ... validation et sécurisation des données
 					// Mise à jour de l'actualité dans la BDD via une fonction du modèle
 					updateActu($id, $titre, $contenu);
+					break;
 
 
 				
@@ -249,6 +250,7 @@ session_start();
 						
 					// Appel à la fonction du modèle pour créer l'actualité
 					createActu($titre, $contenu, $date_publication, $image_actu, $id_auteur);
+					break;
 
 				case 'ajouter_simulation' :
 					include_once "libs/maLibSQL.pdo.php";
