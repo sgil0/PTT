@@ -167,11 +167,13 @@ CREATE TABLE primes (
     image VARCHAR(255)
 );
 
-CREATE TABLE IF NOT EXISTS conditions_primes (
+CREATE TABLE conditions_primes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    prime_id INT,
-    question_id INT,
-    valeur_attendue TEXT,
+    prime_id INT NOT NULL,
+    question_id INT NOT NULL,
+    valeur_attendue TEXT, -- pour bool ou select (liste séparée par virgules)
+    borne_min INT DEFAULT NULL,
+    borne_max INT DEFAULT NULL,
     FOREIGN KEY (prime_id) REFERENCES primes(id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
