@@ -9,6 +9,16 @@
         #edit-section { display: none; }
     </style>
 </head>
+
+<?php
+if (isset($_SESSION['idUser'])) {
+    $idUser = $_SESSION['idUser'];
+    $isAdmin = isUserAdmin($idUser);
+} else {
+    $isAdmin = false;
+}
+?>
+
 <body>
     <h1>Actu</h1>
 

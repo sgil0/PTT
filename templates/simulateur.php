@@ -1,180 +1,106 @@
-
 <?php
-// Vérifie si l'utilisateur est connecté et récupère son ID
-if (isset($_SESSION['idUser'])) { // Utilisation correcte de la session
-    $idUser = $_SESSION['idUser']; 
+include_once __DIR__ . '/../libs/maLibSQL.pdo.php';
+
+if (isset($_SESSION['idUser'])) {
+    $idUser = $_SESSION['idUser'];
     $isAdmin = isUserAdmin($idUser);
 } else {
-    $isAdmin = false; // L'utilisateur n'est pas connecté
+    $isAdmin = false;
+}
+
+// Récupérer toutes les questions et propositions
+$questions = SQLSelect("SELECT * FROM questions");
+$propositions = SQLSelect("SELECT * FROM propositions");
+$aides = SQLSelect("SELECT * FROM aides");
+$conditions = SQLSelect("SELECT * FROM conditions_aides");
+$questions = $questions ?: [];
+$propositions = $propositions ?: [];
+$aides = $aides ?: [];
+$conditions = $conditions ?: [];
+
+
+// Indexation pour accélérer l'accès
+$prop_map = [];
+foreach ($propositions as $p) {
+    $prop_map[$p['question_id']][] = $p['proposition'];
+}
+
+$cond_map = [];
+foreach ($conditions as $c) {
+    $cond_map[$c['aide_id']][] = [
+        'question_id' => $c['question_id'],
+        'valeur' => $c['valeur_attendue']
+    ];
+}
+
+// Traitement du formulaire
+$resultats = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $reponses = $_POST['reponses'] ?? [];
+
+    foreach ($aides as $aide) {
+        $valide = true;
+        foreach ($cond_map[$aide['id']] ?? [] as $cond) {
+            $qID = $cond['question_id'];
+            $attendue = strtolower(trim($cond['valeur']));
+            $reponse = strtolower(trim($reponses[$qID] ?? ''));
+            if ($reponse === '') continue; // indifférent
+            if ($reponse != $attendue) {
+                $valide = false;
+                break;
+            }
+        }
+        if ($valide) $resultats[] = $aide;
+    }
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>simulations</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        #edit-section { display: none; }
-    </style>
-</head>
-<?php if ($isAdmin): ?>
-    <button id="toggle-edit-mode">Mode Édition</button>
-<?php endif; ?>
-<body>
-    <h1>Simulateur</h1>
+<h1>Simulateur d'aides</h1>
 
-    <div id="view">
-    <h2>Simulations disponibles</h2>
-    
-    <?php
-    include_once "libs/maLibSQL.pdo.php";
-    $simulations = SQLSelect("SELECT * FROM simulations ORDER BY date_creation DESC");
+<form method="POST">
+<?php foreach ($questions as $q): ?>
+    <div style="margin-bottom:20px">
+        <label><strong><?= htmlspecialchars($q['question']) ?></strong></label><br>
 
-    if (!$simulations || empty($simulations)) {
-        echo "<p>Aucune simulation trouvée.</p>"; // Afficher un message au lieu d'une erreur
-    } else {
-        foreach ($simulations as $sim) {
-            echo "<div class='simulation-card'>";
-            echo "<h3><a href='simulation.php?id=" . $sim['id'] . "'>" . htmlspecialchars($sim['titre']) . "</a></h3>";
-            echo "<p>" . htmlspecialchars($sim['description']) . "</p>";
-            echo "<p class='date'>Créée le : " . $sim['date_creation'] . "</p>";
-            echo "</div>";
-        }
-    }
-    ?>
+        <?php if ($q['type'] === 'bool'): ?>
+            <select name="reponses[<?= $q['id'] ?>]">
+                <option value="">-- Choisir --</option>
+                <option value="oui">Oui</option>
+                <option value="non">Non</option>
+            </select>
+
+        <?php elseif ($q['type'] === 'select'): ?>
+            <select name="reponses[<?= $q['id'] ?>]">
+                <option value="">-- Choisir --</option>
+                <?php foreach ($prop_map[$q['id']] ?? [] as $opt): ?>
+                    <option value="<?= $opt ?>"><?= $opt ?></option>
+                <?php endforeach; ?>
+            </select>
+
+        <?php elseif ($q['type'] === 'number'): ?>
+            <input type="number" name="reponses[<?= $q['id'] ?>]">
+        <?php endif; ?>
     </div>
+<?php endforeach; ?>
 
-    <div id="edit">
-    <h2>Créer une nouvelle simulation</h2>
-    <form method="POST" action="controleur.php">
-        <input type="hidden" name="action" value="ajouter_simulation">
-        
-        <label for="titre">Titre :</label>
-        <input type="text" name="titre" id="titre" required>
-        
-        <label for="description">Description :</label>
-        <textarea name="description" id="description" required></textarea>
-        
-        <button type="submit">Créer</button>
-        <button id="cancel-btn">Annuler</button>
-    </form>
+    <button type="submit">Vérifier mes aides</button>
+</form>
+
+<?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
+    <h2>Aides éligibles :</h2>
+    <?php if (empty($resultats)): ?>
+        <p>Aucune aide ne correspond à vos réponses.</p>
+    <?php else: ?>
+        <ul>
+        <?php foreach ($resultats as $aide): ?>
+            <li><strong><?= htmlspecialchars($aide['nom']) ?></strong> : <?= htmlspecialchars($aide['description']) ?></li>
+        <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+<?php endif; ?>
+
+<div class="d-flex justify-content-between align-items-center">
+    <?php if ($isAdmin): ?>
+        <a href="./index.php?view=gestionSimulateur" class="btn btn-sm btn-outline-secondary">🛠 Admin</a>
+    <?php endif; ?>
 </div>
-
-
-    <script>
-        $("#edit").hide();
-        $(document).ready(function () {
-            $("#edit-btn").click(function () {
-                $("#view").hide();
-                $("#edit").show();
-            });
-
-            $("#cancel-btn, #save-btn").click(function () {
-                $("#edit").hide();
-                $("#view").show();
-            });
-        });
-    </script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let editMode = false;
-        const button = document.getElementById("toggle-edit-mode");
-
-        button.addEventListener("click", function () {
-            editMode = !editMode;
-
-            if (editMode) {
-                document.getElementById("view").style.display = "none";
-                document.getElementById("edit").style.display = "block";
-                button.textContent = "Mode Vue"; // Change le texte du bouton
-            } else {
-                document.getElementById("edit").style.display = "none";
-                document.getElementById("view").style.display = "block";
-                button.textContent = "Mode Édition"; // Change le texte du bouton
-            }
-        });
-    });
-</script>
-</body>
-</html>
-
-<style>
-/* Centrer le contenu principal */
-#view, #edit {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-/* Centrer le conteneur des simulations */
-.simulation-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    max-width: 1000px;
-    margin: auto;
-}
-
-/* Cartes de simulation */
-.simulation-card {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 280px;
-    transition: transform 0.2s ease-in-out;
-    text-align: center;
-}
-
-/* Effet au survol */
-.simulation-card:hover {
-    transform: scale(1.05);
-}
-
-/* Style du bouton Mode Édition */
-#toggle-edit-mode {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease-in-out;
-}
-
-#toggle-edit-mode:hover {
-    background-color: #0056b3;
-}
-
-/* Style du titre */
-.simulation-card h3 a {
-    text-decoration: none;
-    color: #007bff;
-    font-size: 18px;
-}
-
-.simulation-card h3 a:hover {
-    text-decoration: underline;
-}
-
-/* Description */
-.simulation-card p {
-    font-size: 14px;
-    color: #555;
-    margin: 10px 0;
-}
-
-/* Date de création */
-.simulation-card .date {
-    font-size: 12px;
-    color: #888;
-}
-</style>

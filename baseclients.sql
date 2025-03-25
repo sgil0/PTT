@@ -143,6 +143,38 @@ CREATE TABLE simulations (
 );
 
 
+DROP TABLE IF EXISTS `questions`;
+CREATE TABLE questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question TEXT NOT NULL,
+    type ENUM('bool', 'select', 'number') NOT NULL
+);
+
+DROP TABLE IF EXISTS `propositions`;
+CREATE TABLE propositions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question_id INT,
+    proposition TEXT,
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
+DROP TABLE IF EXISTS `aides`;
+CREATE TABLE aides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255),
+    description TEXT
+);
+
+DROP TABLE IF EXISTS `conditions_aides`;
+CREATE TABLE conditions_aides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    aide_id INT,
+    question_id INT,
+    valeur_attendue TEXT,
+    FOREIGN KEY (aide_id) REFERENCES aides(id),
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
 
 --
 -- Contraintes pour les tables déchargées
