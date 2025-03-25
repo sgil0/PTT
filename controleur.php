@@ -84,6 +84,25 @@ session_start();
 					
 				}
 				break;
+
+				case 'confirmer_rdv':
+					$id_utilisateur = valider('idUser','SESSION');
+					$selectedDate   = valider('day');
+					$selectedTime   = valider('selectedTime');
+					$description = valider('description');
+				
+					if ($id_utilisateur && $selectedDate && $selectedTime) {
+						$date_heure = date("Y-m-d H:i:s", strtotime("$selectedDate $selectedTime"));
+						if (ajouterRendezVous($id_utilisateur, $date_heure, $description)) {
+							$addArgs = "?view=planning&confirmation=ok";
+						} else {
+							$addArgs = "?view=planning&error=insert";
+						}
+					} else {
+						$addArgs = "?view=planning&error=missing_data";
+					}
+				break;
+				
 			
 				case 'maj_email':
 					// Traitement du formulaire de changement d'email
@@ -176,6 +195,61 @@ session_start();
 					}
 					// Rediriger vers la page userSettings sans passer le message en GET
 					$addArgs = "?view=userSettings#new_email";
+					break;
+
+				case "saveEditActu":
+					// Récupérer les données du formulaire
+					$id = $_POST['id'] ?? 0;
+					$titre = $_POST['titre'] ?? '';
+					$contenu = $_POST['contenu'] ?? '';						
+					// ... validation et sécurisation des données
+					// Mise à jour de l'actualité dans la BDD via une fonction du modèle
+					updateActu($id, $titre, $contenu);
+					break;
+
+
+				
+				case "addActuProcess":
+					$idUser = $_SESSION['idUser'] ?? 0;
+        			if (!isUserAdmin($idUser)) {
+            			echo "Accès refusé.";
+            			exit;
+        			}
+					// Récupération des données du formulaire
+					$titre = $_POST['titre'] ?? '';
+					$contenu = $_POST['contenu'] ?? '';						
+					// Utiliser la date actuelle pour la publication
+					$date_publication = date("Y-m-d");
+						
+					// Récupérer l'id de l'auteur depuis la session
+					$id_auteur = $_SESSION['idUser'] ?? 0;
+						
+					// Gestion de l'upload de l'image (optionnel)
+					$image_actu = "";
+					if (!empty($_FILES['image_actu']['tmp_name'])) {
+    					$targetDir = "ressources/"; // Dossier de destination
+    					// Créer le dossier s'il n'existe pas
+    					if (!is_dir($targetDir)) {
+        					mkdir($targetDir, 0755, true);
+    					}
+    					// Récupérer le nom du fichier et générer un nom unique
+    					$originalName = basename($_FILES['image_actu']['name']);
+    					$uniqueName = uniqid() . "_" . $originalName;
+    					$targetFile = $targetDir . $uniqueName;
+    
+   						// Déplacer le fichier temporaire vers le dossier de destination
+    					if (move_uploaded_file($_FILES['image_actu']['tmp_name'], $targetFile)) {
+        					$image_actu = $targetFile; // Ce chemin sera stocké en base
+    					} else {
+        					// En cas d'erreur, vous pouvez gérer le message d'erreur
+       					 	echo "Erreur lors du téléchargement de l'image.";
+        					exit;
+    					}
+					}
+
+						
+					// Appel à la fonction du modèle pour créer l'actualité
+					createActu($titre, $contenu, $date_publication, $image_actu, $id_auteur);
 					break;
 
 				case 'ajouter_simulation' :
