@@ -182,13 +182,8 @@ function SQLSelect($sql, $params = []) {
 */
 function parcoursRs($result)
 {
-	if  ($result == false) return array();
-
-	$result->setFetchMode(PDO::FETCH_ASSOC);
-	while ($ligne = $result->fetch()) 
-		$tab[]= $ligne;
-
-	return $tab;
+    if (!is_array($result)) return array();
+    return $result;
 }
 
 
