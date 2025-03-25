@@ -1,10 +1,12 @@
 <?php
-//session_start();
+
+// Récupération de l'ID utilisateur ou définition d'une valeur par défaut (0 si non connecté)
+$idUser = $_SESSION['idUser'] ?? 0;
+
 require_once __DIR__ . '/../libs/maLibSQL.pdo.php';
 require_once __DIR__ . '/../libs/modele.php';
 
 // Récupération de la liste des actualités depuis la base de données
-// Vous devez avoir défini cette fonction dans votre modèle
 $actualites = getActualites();
 ?>
 <!DOCTYPE html>
@@ -13,7 +15,7 @@ $actualites = getActualites();
   <meta charset="UTF-8">
   <title>Fil d'actualité - Actualités de l'entreprise</title>
   <style>
-    /* Style de base pour l'affichage des actualités */
+    /* Styles de base pour l'affichage des actualités */
     #listeActualites {
       max-width: 800px;
       margin: auto;
@@ -38,37 +40,26 @@ $actualites = getActualites();
 <body>
   <h1>Fil d'actualité</h1>
   
-  <!-- Bouton d'ajout visible uniquement pour l'admin -->
-   <?php $_SESSION['idUser'] = $idUser; ?>
-  <?php if(isUserAdmin($idUser)): ?>
-    <p><a href="addActu.php">Ajouter une actualité</a></p>
+  <!-- Bouton redirigeant vers l'interface admin (via index.php) visible uniquement pour les administrateurs -->
+  <?php if (isUserAdmin($idUser)): ?>
+    <p><a href="index.php?view=adminActu">Passer en mode édition</a></p>
   <?php endif; ?>
 
   <div id="listeActualites">
-  <?php foreach($actualites as $actu): ?>
-  <div class="actualite draggable" data-id="<?= $actu['id_actualite'] ?>" draggable="true">
-    <img src="<?= $actu['image_actu'] ?>" alt="<?= htmlspecialchars($actu['titre']) ?>">
-    <div>
-      <h2><?= htmlspecialchars($actu['titre']) ?></h2>
-      <p><?= htmlspecialchars($actu['contenu']) ?></p>
-      <!-- Si vous souhaitez afficher la date ou l'auteur -->
-      <p>Publié le : <?= htmlspecialchars($actu['date_publication']) ?></p>
-      <p>Auteur : <?= htmlspecialchars($actu['id_auteur']) ?></p>
-
-      <!-- Liens d'administration (modification et suppression) -->
-      <?php if(isUserAdmin($idUser)): ?>
-        <p>
-          <a href="editActu.php?id=<?= $actu['id_actualite'] ?>">Modifier</a> | 
-          <a href="deleteActu.php?id=<?= $actu['id_actualite'] ?>" onclick="return confirm('Voulez-vous vraiment supprimer cette actualité ?');">Supprimer</a>
-        </p>
-      <?php endif; ?>
-    </div>
-  </div>
-<?php endforeach; ?>
-
+    <?php foreach($actualites as $actu): ?>
+      <div class="actualite draggable" data-id="<?= $actu['id_actualite'] ?>" draggable="true">
+        <img src="<?= htmlspecialchars($actu['image_actu']) ?>" alt="<?= htmlspecialchars($actu['titre']) ?>">
+        <div>
+          <h2><?= htmlspecialchars($actu['titre']) ?></h2>
+          <p><?= htmlspecialchars($actu['contenu']) ?></p>
+          <p>Publié le : <?= htmlspecialchars($actu['date_publication']) ?></p>
+          <p>Auteur : <?= htmlspecialchars($actu['id_auteur']) ?></p>
+        </div>
+      </div>
+    <?php endforeach; ?>
   </div>
 
-  <!-- Script JavaScript pour le drag-and-drop -->
+  <!-- Script JavaScript pour le drag-and-drop (fonctionnel pour tous, si nécessaire) -->
   <script>
     const draggables = document.querySelectorAll('.draggable');
     const container = document.getElementById('listeActualites');
@@ -79,10 +70,9 @@ $actualites = getActualites();
       });
       draggable.addEventListener('dragend', () => {
         draggable.classList.remove('dragging');
-        // Récupération du nouvel ordre (à envoyer ensuite en AJAX pour sauvegarde dans la BDD)
+        // Récupération du nouvel ordre pour vérification (vous pouvez l'envoyer au serveur si besoin)
         const order = Array.from(document.querySelectorAll('.actualite')).map(item => item.dataset.id);
         console.log('Nouvel ordre:', order);
-        // Vous pouvez ici réaliser un appel AJAX pour sauvegarder l'ordre dans la base
       });
     });
 
@@ -103,7 +93,7 @@ $actualites = getActualites();
         const box = child.getBoundingClientRect();
         const offset = y - box.top - box.height / 2;
         if (offset < 0 && offset > closest.offset) {
-          return { offset: offset, element: child }
+          return { offset: offset, element: child };
         } else {
           return closest;
         }

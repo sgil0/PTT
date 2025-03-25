@@ -204,8 +204,7 @@ function getActualites() {
     
     // Exécution de la requête grâce à la fonction SQLSelect() définie dans maLibSQL.pdo.php
     $actualites = SQLSelect($sql);
-
-	
+	if($actualites==false) return [];
     
     return $actualites;
 }
@@ -221,8 +220,38 @@ function isUserAdmin($idUser) {
     return ($role === "administrateur");
 }
 
+function getActuById($idActu) {
+    // Prépare la requête avec un paramètre pour éviter l'injection SQL
+    $sql = "SELECT * FROM actualites WHERE id_actualite = $idActu";
 
+    // Récupère la valeur du champ "role" pour cet utilisateur
+    $actu = SQLSelect($sql);
 
+    // Compare avec la chaîne "administrateur" (attention à l'orthographe)
+    return $actu;
+}
+
+function updateActu($id, $titre, $contenu) {
+    return SQLUpdate("
+	UPDATE actualites
+	SET titre = '$titre', contenu = '$contenu'
+	WHERE id_actualite = '$id';
+	");
+}
+
+function deleteActu($idActu) {
+	return SQLUpdate("
+	DELETE FROM actualites
+	WHERE id_actualite = '$idActu'
+	");
+}
+
+function createActu($titre, $contenu, $date_publication, $image_actu = "", $id_auteur) {
+    return SQLInsert("
+	INSERT INTO actualites (titre, contenu, date_publication, image_actu, id_auteur)
+    VALUES ('$titre', '$contenu', '$date_publication', '$image_actu', '$id_auteur')
+	");
+}
 
 
 ?>
