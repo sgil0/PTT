@@ -49,7 +49,7 @@ $primes = SQLSelect("SELECT * FROM primes ORDER BY id DESC");
         <img src="<?= $uploadDir . htmlspecialchars($prime['image']) ?>" alt="image" style="max-width: 100%; height: auto;">
         <h4><?= htmlspecialchars($prime['nom']) ?></h4>
         <p style="font-size: 0.9em;"><?= nl2br(htmlspecialchars($prime['description'])) ?></p>
-        <a href="gestionConditionsPrime.php?prime_id=<?= $prime['id'] ?>" class="btn btn-sm btn-outline-primary">Définir critères</a>
+        <a href="index.php?view=gestionConditionsPrime&prime_id=<?= $prime['id'] ?>" class="btn btn-sm btn-outline-primary">Définir critères</a>
     </div>
 <?php endforeach; ?>
 </div>

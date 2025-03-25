@@ -190,5 +190,4 @@ function parcoursRs($result)
 
 
 
-
 ?>
