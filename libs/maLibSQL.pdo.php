@@ -1,7 +1,13 @@
 <?php
 
 include_once "config.php";
-
+global $dbh; // Déclarer la variable comme globale
+try {
+    $dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base;charset=utf8", $BDD_user, $BDD_password);
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("<font color=\"red\">Erreur de connexion : " . $e->getMessage() . "</font>");
+}
 /**
  * @file maLibSQL.php
  * Ce fichier définit les fonctions de requêtage
@@ -25,6 +31,7 @@ function SQLUpdate($sql)
 	global $BDD_base;
 	global $BDD_user;
 	global $BDD_password;
+
 
 	try {
 		$dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base", $BDD_user, $BDD_password);
@@ -56,29 +63,47 @@ function SQLDelete($sql) {return SQLUpdate($sql);}
  * @pre Les variables  $BDD_login, $BDD_password $BDD_chaine doivent exister
  * @return Renvoie l'insert ID ... utile quand c'est un numéro auto
  */
-function SQLInsert($sql)
+
+ function SQLExec($sql, $params = []) {
+    global $BDD_host, $BDD_base, $BDD_user, $BDD_password;
+
+    try {
+        $dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base", $BDD_user, $BDD_password);
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $dbh->exec("SET CHARACTER SET utf8");
+
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute($params);
+
+        $dbh = null;
+        return true;
+    } catch (PDOException $e) {
+        die("<font color='red'>SQLExec: Erreur : " . $e->getMessage() . "</font>");
+    }
+}
+
+function SQLInsert($sql, $params = [])
 {
-	global $BDD_host;
-	global $BDD_base;
-	global $BDD_user;
-	global $BDD_password;
-	
-	try {
-		$dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base", $BDD_user, $BDD_password);
-	} catch (PDOException $e) {
-		die("<font color=\"red\">SQLInsert: Erreur de connexion : " . $e->getMessage() . "</font>");
-	}
+    global $BDD_host;
+    global $BDD_base;
+    global $BDD_user;
+    global $BDD_password;
 
-	$dbh->exec("SET CHARACTER SET utf8");
-	$res = $dbh->query($sql);
-	if ($res === false) {
-		$e = $dbh->errorInfo(); 
-		die("<font color=\"red\">SQLInsert: Erreur de requete : " . $e[2] . "</font>");
-	}
+    try {
+        $dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base", $BDD_user, $BDD_password);
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $dbh->exec("SET CHARACTER SET utf8");
 
-	$lastInsertId = $dbh->lastInsertId();
-	$dbh = null; 
-	return $lastInsertId;
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute($params);
+
+        $lastInsertId = $dbh->lastInsertId();
+        $dbh = null;
+        return $lastInsertId;
+
+    } catch (PDOException $e) {
+        die("<font color=\"red\">SQLInsert: Erreur : " . $e->getMessage() . "</font>");
+    }
 }
 
 
@@ -130,31 +155,23 @@ function SQLGetChamp($sql)
  * @param string $SQL
  * @return boolean|resource
  */
-function SQLSelect($sql)
-{	
- 	global $BDD_host;
-	global $BDD_base;
- 	global $BDD_user;
- 	global $BDD_password;
+function SQLSelect($sql, $params = []) {
+    global $BDD_host, $BDD_base, $BDD_user, $BDD_password;
 
-	try {
-		$dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base", $BDD_user, $BDD_password);
-	} catch (PDOException $e) {
-		die("<font color=\"red\">SQLSelect: Erreur de connexion : " . $e->getMessage() . "</font>");
-	}
+    try {
+        $dbh = new PDO("mysql:host=$BDD_host;dbname=$BDD_base", $BDD_user, $BDD_password);
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $dbh->exec("SET CHARACTER SET utf8");
 
-	$dbh->exec("SET CHARACTER SET utf8");
-	$res = $dbh->query($sql);
-	if ($res === false) {
-		$e = $dbh->errorInfo(); 
-		die("<font color=\"red\">SQLSelect: Erreur de requete : " . $e[2] . "</font>");
-	}
-	
-	$num = $res->rowCount();
-	$dbh = null;
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute($params);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-	if ($num==0) return false;
-	else return $res;
+        $dbh = null;
+        return $result;
+    } catch (PDOException $e) {
+        die("<font color='red'>SQLSelect: Erreur : " . $e->getMessage() . "</font>");
+    }
 }
 
 /**

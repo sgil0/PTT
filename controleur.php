@@ -2,13 +2,16 @@
 date_default_timezone_set("Europe/Paris");
 session_start();
 
+
 	include_once "libs/maLibUtils.php";
 	include_once "libs/maLibSQL.pdo.php";
 	include_once "libs/maLibSecurisation.php"; 
 	include_once "libs/modele.php"; 
 
-
 	$addArgs = "";
+
+	global $dbh; // Je déclare $dbh comme variable globale pour pouvoir l'utiliser dans les fonctions
+
 
 	if ($action = valider("action"))
 	{
@@ -247,7 +250,23 @@ session_start();
 					// Appel à la fonction du modèle pour créer l'actualité
 					createActu($titre, $contenu, $date_publication, $image_actu, $id_auteur);
 
+				case 'ajouter_simulation' :
+					include_once "libs/maLibSQL.pdo.php";
+
+					$titre = $_POST['titre'];
+					$description = $_POST['description'];
+				
+					// Insérer la simulation en BDD
+					$sql = "INSERT INTO simulations (titre, description) VALUES (:titre, :description)";
+					$stmt = $dbh->prepare($sql);
+					$stmt->execute(['titre' => $titre, 'description' => $description]);
+				
+					// Redirection après insertion
+					header("Location: index.php?view=simulateur");
+					exit();
+				break;
 		}
+
 
 	}
 

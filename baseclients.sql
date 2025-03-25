@@ -125,6 +125,57 @@ CREATE TABLE IF NOT EXISTS `utilisateurs` (
 INSERT INTO `utilisateurs` (`id_utilisateur`, `prenom`, `nom`, `email`, `mot_de_passe`, `notif_actu`, `notif_dossier`, `type_utilisateur`, `role`, `date_creation`, `connecte`) VALUES
 (2, 'Samuel', 'GILLON', 'test@gmail.com', 'test', 0, 0, 'particulier', 'utilisateur', '2025-03-11 08:52:37', 0);
 
+INSERT INTO `utilisateurs` (`id_utilisateur`, `prenom`, `nom`, `email`, `mot_de_passe`, `notif_actu`, `notif_dossier`, `type_utilisateur`, `role`, `date_creation`, `connecte`) VALUES
+(3, 'Admin', 'TEST', 'admin@gmail.com', 'admin', 0, 0, 'particulier', 'administrateur', '2025-03-11 08:52:37', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `simulations`
+--
+
+DROP TABLE IF EXISTS `simulations`;
+CREATE TABLE simulations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+DROP TABLE IF EXISTS `questions`;
+CREATE TABLE questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question TEXT NOT NULL,
+    type ENUM('bool', 'select', 'number') NOT NULL
+);
+
+DROP TABLE IF EXISTS `propositions`;
+CREATE TABLE propositions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question_id INT,
+    proposition TEXT,
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
+DROP TABLE IF EXISTS `aides`;
+CREATE TABLE aides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255),
+    description TEXT
+);
+
+DROP TABLE IF EXISTS `conditions_aides`;
+CREATE TABLE conditions_aides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    aide_id INT,
+    question_id INT,
+    valeur_attendue TEXT,
+    FOREIGN KEY (aide_id) REFERENCES aides(id),
+    FOREIGN KEY (question_id) REFERENCES questions(id)
+);
+
+
 --
 -- Contraintes pour les tables déchargées
 --
@@ -148,6 +199,8 @@ ALTER TABLE `dossiers`
 ALTER TABLE `rendez_vous`
   ADD CONSTRAINT `rendez_vous_ibfk_1` FOREIGN KEY (`id_utilisateur`) REFERENCES `utilisateurs` (`id_utilisateur`) ON DELETE CASCADE;
 COMMIT;
+
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
