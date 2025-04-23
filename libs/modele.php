@@ -199,15 +199,14 @@ function getRendezVousByDate($date) {
 }
 
 function getActualites() {
-    // Requête SQL pour sélectionner les champs nécessaires
-    $sql = "SELECT id_actualite, titre, contenu, image_actu, date_publication, id_auteur FROM actualites ORDER BY id_actualite DESC";
-    
-    // Exécution de la requête grâce à la fonction SQLSelect() définie dans maLibSQL.pdo.php
-    $actualites = SQLSelect($sql);
-	if($actualites==false) return [];
-    
-    return $actualites;
+    // Récupère toutes les actualités et les infos sur l'auteur via une jointure
+    $sql = "SELECT a.*, u.nom AS nom_auteur, u.prenom AS prenom_auteur 
+            FROM actualites a
+            LEFT JOIN utilisateurs u ON a.id_auteur = u.id_utilisateur
+            ORDER BY a.date_publication DESC";
+    return SQLSelect($sql);
 }
+
 
 function isUserAdmin($idUser) {
     // Prépare la requête avec un paramètre pour éviter l'injection SQL
@@ -247,11 +246,38 @@ function deleteActu($idActu) {
 	");
 }
 
-function createActu($titre, $contenu, $date_publication, $image_actu = "", $id_auteur) {
-    return SQLInsert("
-	INSERT INTO actualites (titre, contenu, date_publication, image_actu, id_auteur)
-    VALUES ('$titre', '$contenu', '$date_publication', '$image_actu', '$id_auteur')
+function createActu($titre, $contenu, $date_publication, $image_actu, $id_auteur) {
+    $sql = "INSERT INTO actualites (titre, contenu, date_publication, image_actu, id_auteur)
+            VALUES (?, ?, ?, ?, ?)";
+
+    // On passe les valeurs dans un tableau
+    return SQLExec($sql, array($titre, $contenu, $date_publication, $image_actu, $id_auteur));
+}
+
+function getUserById($idUser) {
+    // Prépare la requête avec un paramètre pour éviter l'injection SQL
+    $user = SQLSelect("
+	SELECT prenom, nom FROM utilisateurs
+	WHERE id_utilisateur = $idUser
 	");
+	return $user;
+}
+
+function createActivite($titre, $contenu, $type_utilisateur)
+{
+    return SQLInsert("
+        INSERT INTO activites (titre, contenu, type_utilisateur)
+        VALUES ('$titre', '$contenu', '$type_utilisateur')
+    ");
+}
+
+function getActivitesByType($type_utilisateur)
+{
+    return SQLSelect("
+        SELECT * FROM activites
+        WHERE type_utilisateur = '$type_utilisateur'
+        ORDER BY date_creation DESC
+    ");
 }
 
 

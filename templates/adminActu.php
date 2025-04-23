@@ -18,44 +18,122 @@ $actualites = getActualites();
   <meta charset="UTF-8">
   <title>Administration des Actualités</title>
   <style>
-    /* Styles de base */
-    #listeActualites {
-      max-width: 800px;
-      margin: auto;
-    }
-    .actualite {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: flex-start;
-      background: #f9f9f9;
-    }
-    .actualite img {
-      max-width: 150px;
-      margin-right: 15px;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-content {
-      background: #fff;
-      padding: 20px;
-      max-width: 600px;
-      width: 90%;
-      border-radius: 5px;
-    }
-    .close-modal {
-      float: right;
-      cursor: pointer;
-    }
+/* ------------------------ */
+/* 1. Style global & conteneur */
+/* ------------------------ */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #FCFCFC;
+  color: #333;
+}
+h1, h2 {
+  text-align: center;
+  color: #d96c2c;
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+#listeActualites {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 10px;
+}
+
+/* ------------------------ */
+/* 2. Cartes "actualite"    */
+/* ------------------------ */
+.actualite {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.actualite:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.actualite img {
+  max-width: 150px;
+  border-radius: 4px;
+  margin-right: 15px;
+}
+.actualite h2 {
+  margin-top: 0;
+  color: #d96c2c;
+}
+.actualite p {
+  margin: 5px 0;
+}
+
+/* ------------------------ */
+/* 3. Liens et boutons      */
+/* ------------------------ */
+/* Pour tous les liens "Modifier", "Supprimer" et "Ajouter une actualité",
+   on applique le même style de bouton "feuille". */
+
+/* - "Modifier" a la classe .edit-link */
+/* - "Supprimer" pointe vers deleteActu.php */
+/* - "Ajouter une actualité" pointe vers addActu.php */
+
+.edit-link,
+a[href*="deleteActu.php"],
+a[href*="addActu.php"] {
+  display: inline-block;
+  background: linear-gradient(to bottom right, #f4a63c, #f07e1f);
+  color: #FAF6E7 !important;
+  padding: 6px 12px;
+  border-radius: 50px 0 50px 50px; /* Forme "feuille" */
+  font-weight: bold;
+  text-decoration: none;
+  margin-right: 5px;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.edit-link:hover,
+a[href*="deleteActu.php"]:hover,
+a[href*="addActu.php"]:hover {
+  background-color: #d96c2c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* ------------------------ */
+/* 4. Modal (si besoin)     */
+/* ------------------------ */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
+  border-radius: 5px;
+  position: relative;
+}
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
   </style>
   <!-- Inclusion de jQuery pour faciliter l'AJAX -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
