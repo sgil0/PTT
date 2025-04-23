@@ -178,7 +178,13 @@ CREATE TABLE conditions_primes (
     FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
 
-
+CREATE TABLE activites (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(255),
+    contenu TEXT,
+    type_utilisateur VARCHAR(50),
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 --
 -- Contraintes pour les tables déchargées
