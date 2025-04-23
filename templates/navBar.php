@@ -24,8 +24,7 @@
             $prenomUser = getPrenom($idUser);
 
             if (isUserAdmin($idUser)) {
-              echo '<a class="nav-link" href="./index.php?view=admin">Administration</a>';
-              echo '<a class="nav-link" href="./index.php?view=admin_permissions">Gérer les permissions</a>';
+              echo '<a class="nav-link" href="./index.php?view=admin">Gérer les permissions</a>';
             } else {
               echo '<a class="nav-link" href="./index.php?view=userFiles">Mes  dossiers</a>';
             }
