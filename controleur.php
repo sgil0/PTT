@@ -205,6 +205,8 @@ session_start();
 					// ... validation et sécurisation des données
 					// Mise à jour de l'actualité dans la BDD via une fonction du modèle
 					updateActu($id, $titre, $contenu);
+					header("Location: index.php?view=actu");
+					exit();
 					break;
 
 
@@ -227,7 +229,7 @@ session_start();
 					// Gestion de l'upload de l'image (optionnel)
 					$image_actu = "";
 					if (!empty($_FILES['image_actu']['tmp_name'])) {
-    					$targetDir = "ressources/"; // Dossier de destination
+    					$targetDir = "uploads/actu/"; // Dossier de destination
     					// Créer le dossier s'il n'existe pas
     					if (!is_dir($targetDir)) {
         					mkdir($targetDir, 0755, true);
@@ -250,6 +252,8 @@ session_start();
 						
 					// Appel à la fonction du modèle pour créer l'actualité
 					createActu($titre, $contenu, $date_publication, $image_actu, $id_auteur);
+					header("Location: index.php?view=actu");
+					exit();
 					break;
 
 				case 'ajouter_simulation' :

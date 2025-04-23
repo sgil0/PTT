@@ -14,7 +14,8 @@
       <div class="navbar-nav nav-underline">
         <a id="accueil" class="nav-link" aria-current="page" href="./index.php?view=accueil">Accueil</a>
         <a id="simulateur" class="nav-link" href="./index.php?view=simulateur">Simulations</a>
-        <a class="nav-link" href="./index.php?view=primes">Nos Primes</a>
+        <a class="nav-link" href="./index.php?view=planning">Prendre Rdv</a>
+        <a class="nav-link" href="./index.php?view=i_activites">Nos activités</a>
         <a class="nav-link" href="./index.php?view=actu">Actus</a>
         <?php 
           if (valider("connecte","SESSION")){
@@ -22,7 +23,7 @@
             $nomUser = getNom($idUser);
             $prenomUser = getPrenom($idUser);
 
-            if (whoIsHe($idUser) == "Admin") {
+            if (isUserAdmin($idUser)) {
               echo '<a class="nav-link" href="./index.php?view=admin">Administration</a>';
             } else {
               echo '<a class="nav-link" href="./index.php?view=userFiles">Mes  dossiers</a>';

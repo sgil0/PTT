@@ -119,3 +119,167 @@ function toggleProps() {
 }
 </script>
 <a href="index.php?view=gestionPrimes" class="btn btn-outline-success">🎁 Gérer les primes</a>
+
+<style>
+    /* =========================
+   1. Style global
+   ========================= */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #FCFCFC; /* Fond clair */
+  min-height: 100vh;
+}
+
+/* =========================
+   2. Titres et textes
+   ========================= */
+h1, h2 {
+  color: #d96c2c;   /* Orange soutenu */
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+label, p {
+  color: #333;
+  font-weight: 500;
+}
+
+strong {
+  color: #d96c2c;  /* Pour souligner les éléments importants */
+}
+
+/* =========================
+   3. Mise en page du formulaire
+   ========================= */
+/* Pour encadrer le formulaire d'ajout / édition de question */
+form[method="POST"] {
+  max-width: 600px;
+  margin: 0 auto 30px auto;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Champs de formulaire */
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  display: block;
+}
+
+/* PropositionsBlock (inputs pour les choix multiples) */
+#propositionsBlock .form-control.mb-1 {
+  margin-bottom: 8px !important;
+}
+
+/* =========================
+   4. Boutons
+   ========================= */
+/* Bouton principal (Ajouter / Mettre à jour) */
+button[type="submit"] {
+  background: linear-gradient(to bottom right, #f4a63c, #f07e1f);
+  color: #FAF6E7;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px 0 50px 50px; /* Forme "feuille" */
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #d96c2c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Boutons .btn-sm (📝 Modifier / 🗑 Supprimer / Gérer primes) */
+.btn-sm {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 50px 0 50px 50px !important; /* même forme */
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Harmoniser l'aspect tout en gardant la différence de couleur */
+.btn-warning {
+  background-color: #f0ad4e !important; /* Couleur "warning" bootstrap */
+  border: none !important;
+  color: #fff !important;
+}
+.btn-warning:hover {
+  background-color: #ec971f !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-danger {
+  background-color: #d9534f !important; /* Couleur "danger" bootstrap */
+  border: none !important;
+  color: #fff !important;
+}
+.btn-danger:hover {
+  background-color: #c9302c !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-outline-success {
+  border: 2px solid #5cb85c !important; /* Couleur "success" bootstrap */
+  color: #5cb85c !important;
+  border-radius: 50px 0 50px 50px !important;
+  background-color: transparent !important;
+}
+.btn-outline-success:hover {
+  background-color: #5cb85c !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* =========================
+   5. Listes
+   ========================= */
+ul {
+  margin: 20px auto;
+  max-width: 700px;
+  list-style-type: none;  /* On enlève les puces classiques */
+  padding: 0;
+}
+
+ul li {
+  background-color: #fff;
+  margin-bottom: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* =========================
+   6. Liens de la page
+   ========================= */
+a {
+  text-decoration: none;
+  color: #d96c2c;
+}
+
+a:hover {
+  color: #f07e1f;
+}
+</style>

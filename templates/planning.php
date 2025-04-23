@@ -2,7 +2,7 @@
 //session_start();
 // Rediriger vers l'accueil si l'utilisateur n'est pas connecté
 if (!isset($_SESSION['idUser'])) {
-    header("Location: index.php?view=accueil");
+    header("Location: index.php?view=login");
     exit();
 }
 
