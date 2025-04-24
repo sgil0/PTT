@@ -280,5 +280,14 @@ function getActivitesByType($type_utilisateur)
     ");
 }
 
+function getDossiersByUser($idUser)
+{
+	return SQLSelect("
+		SELECT * 
+        FROM dossiers 
+        WHERE id_utilisateur = $idUser
+	");
+}
+
 
 ?>

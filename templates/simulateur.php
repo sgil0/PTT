@@ -42,7 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $reponse = trim($reponses[$qID] ?? '');
 
             if ($typeCond === 'bool' || $typeCond === 'select') {
-                if ($cond['valeur_attendue'] === '' || $reponse === '') continue;
+              if ($reponse === '') {
+                  $valide = false;
+                  break;
+              }
                 $attendues = explode(',', $cond['valeur_attendue']);
                 if (!in_array($reponse, $attendues)) {
                     $valide = false;
@@ -51,7 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($typeCond === 'number') {
-                if ($reponse === '') continue;
+                if ($reponse === '') {
+                  $valide = false;
+                  break;
+              }
                 $val = (int)$reponse;
                 if (($cond['borne_min'] !== null && $val < $cond['borne_min']) ||
                     ($cond['borne_max'] !== null && $val > $cond['borne_max'])) {
