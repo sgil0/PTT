@@ -14,7 +14,7 @@ if (!isset($_SESSION['idUser']) || !isUserAdmin($_SESSION['idUser'])) {
 // Initialisation sécurisée de $pdo
 if (!isset($pdo)) {
     try {
-        $pdo = new PDO("mysql:host=localhost;dbname=baseclients;charset=utf8", "root", "");
+        $pdo = new PDO("mysql:host=localhost;dbname=PTT;charset=utf8", "root", "");
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (Exception $e) {
         die("Erreur PDO : " . $e->getMessage());

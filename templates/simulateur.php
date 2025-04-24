@@ -153,19 +153,29 @@ p, label {
 /* =========================
    5. Style des blocs "questions"
    ========================= */
-/* Pour donner un aspect "carte" à chaque question, on peut entourer 
-   chaque question d'un bloc <div> stylé. 
-   Comme on ne peut pas changer le HTML, on cible simplement
-   le style inline: "margin-bottom:20px" pour leur donner un look de "carte".
-*/
-form > div[style*="margin-bottom:20px"] {
-  background-color: #fff;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  padding: 16px;
-  margin-bottom: 20px; /* déjà présent en inline, on le réaffirme */
+   form > div[style*="margin-bottom:20px"] {
+  background: linear-gradient(to bottom right, #fff5e6, #ffe9cc);
+  border: 1px solid #f4a63c;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(244, 166, 60, 0.15);
+  padding: 20px 25px;
+  margin-bottom: 24px;
+  transition: box-shadow 0.3s, transform 0.2s;
 }
+
+form > div[style*="margin-bottom:20px"]:hover {
+  box-shadow: 0 6px 16px rgba(244, 166, 60, 0.25);
+  transform: translateY(-2px);
+}
+
+form label {
+  font-weight: bold;
+  color: #d96c2c;
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
 
 /* =========================
    6. Champs de formulaire
