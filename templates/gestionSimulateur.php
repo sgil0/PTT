@@ -1,4 +1,6 @@
 <?php
+ob_start();
+include "init.php"; 
 include_once __DIR__ . "/../libs/maLibSQL.pdo.php";
 
 // Suppression
@@ -119,6 +121,9 @@ function toggleProps() {
 }
 </script>
 <a href="index.php?view=gestionPrimes" class="btn btn-outline-success">🎁 Gérer les primes</a>
+<?php
+ob_end_flush();
+?>
 
 <style>
     /* =========================
